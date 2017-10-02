@@ -1,0 +1,9 @@
+*.out
+*.in
+*.o
+*~
+!.gitignore
+ProjectFiles
+Documentation
+References
+
