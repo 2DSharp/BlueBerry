@@ -1,4 +1,0 @@
-Instructions: http://www.instructables.com/id/16x8-LED-dot-matrix-with-MAX7219-module/
-
-Parts: https://www.amazon.in/Robodo-Electronics-Max7219-Control-Rasberry/dp/B00QVFDHHG?tag=googinhydr18418-21&tag=googinkenshoo-21&ascsubtag=51c0dc4d-1a03-4d1e-a0de-c542d59c47db
-
