@@ -31,12 +31,12 @@ int stopTime;
  * Setting up the PIR
  */
 void initPIRSensor(){
-
+  Serial.println("Starting PIR Sensor");
   pinMode(PIR_PIN, INPUT);
   digitalWrite(PIR_PIN, LOW);
 
   /* Allow a few seconds of calibration */
-  Serial.print("Calibrating sensor ");
+  Serial.print("Calibrating PIR sensor ");
 
   for(int i = 0; i < CALIBRATION_TIME; i++){
     
@@ -77,8 +77,6 @@ void PIRMotionCounter(bool motionDetect) {
       Serial.print(startTime);
       delay(1000);
       Serial.println(" sec");
-
-      return true;
       
       delay(50);
     }

@@ -5,6 +5,7 @@ int initialReading;
  * Initializing the sensor with default values
  */
 void initLDRSensor() {
+  Serial.println("Starting LDR Sensor");
   detectLightChange(0, readLightState());
 }
 /**

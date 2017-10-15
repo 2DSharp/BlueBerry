@@ -63,7 +63,8 @@ void alert() {
 }
 void loop() {
   /* 
-   * Run the Arduino loop
+   * Run the Arduino loop, we need a trigger from the bluetooth
+   * TODO: set up modes
    */
   if (hasStateChanged()) {
 

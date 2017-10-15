@@ -9,6 +9,7 @@ Trig to Arduino pin 12
 #define ECHO_PIN 13
 
 void initUltrasonicSensor() {
+  Serial.println("Starting Ultrasonic Sensor");
   /**
    * TRIG_PIN sends an ultrasonic wave
    */
