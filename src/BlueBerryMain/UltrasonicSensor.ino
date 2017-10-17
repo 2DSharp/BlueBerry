@@ -1,4 +1,11 @@
 /**
+ * Ultrasonic Sensor Driver
+ * @author Dedipyaman Das
+ * github.com/2DSharp/BlueBerry
+ * @version 1.0/17
+ * 
+ */
+/**
 HC-SR04 Ping distance sensor
 VCC to Arduino 5V
 GND to Arduino GND
@@ -31,7 +38,8 @@ bool detectDistanceChange(int lastDistance) {
    * The accuracy seems to be quite convincing
    * 2 seems to be significant
    */
-  return abs(calculateDistance() - lastDistance) > 2;
+   Serial.println(lastDistance);
+   return abs(calculateDistance() - lastDistance) > 10;
 }
 int calculateDistance() {
   

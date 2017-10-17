@@ -1,4 +1,10 @@
 /**
+ * Project BlueBerry Main controller
+ * @author Dedipyaman Das
+ * github.com/2DSharp/BlueBerry
+ * @version 1.0/17 
+ */
+/**
  * Project BlueBerry's main sketch that integrates the other sketches
  * Upon compilation, it automagically includes all the dependencies.
  * This program runs the Arduino Mega and is responsible for running
@@ -21,9 +27,10 @@ void setup() {
   /*
    * Initializing the modules.
    */
-  initPIRSensor();
   initLDRSensor();
   initUltrasonicSensor();
+  initPIRSensor();
+  initMotorDriver();
 }
 /**
  * Checks if any state has been changed.
@@ -38,7 +45,7 @@ boolean hasStateChanged() {
    * Putting a counter to start counting from the second iteration
    * Analog has fragile results
    */
-  ldrCounter++; 
+  ldrCounter++;
   lightChanged = detectLightChange(ldrCounter, readLightState());
   
   int distanceChanged = detectDistanceChange(lastDistance);
@@ -47,6 +54,9 @@ boolean hasStateChanged() {
    * We need 2 out of 3 to be confirmed of some anomaly.
    * The bitwise doesn't seem to be particularly performant
    */
+  Serial.println(motionDetected);
+  Serial.println(lightChanged);
+  Serial.println(distanceChanged);
   int totalSensorValue = motionDetected + lightChanged + distanceChanged;
   /**
    * Passed if >= 2, alert user.
@@ -56,7 +66,7 @@ boolean hasStateChanged() {
 
 void alert() {
 
-  Serial.print("Anomaly detected");
+  Serial.println("Anomaly detected");
   /*bark();
     sendSMSAlert();
   */
@@ -67,9 +77,19 @@ void loop() {
    * TODO: set up modes
    */
   if (hasStateChanged()) {
-
+    
     alert();
   }
+
+  if (pathClear()) {
+
+    moveForward();
+  }
+  else {
+
+    brake();
+    lookAround();
+  }   
 
 }
 
