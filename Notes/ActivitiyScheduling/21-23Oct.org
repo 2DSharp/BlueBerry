@@ -12,7 +12,7 @@
     DEADLINE: <2017-10-21 Sat>
     JOB: [[Pujitha, Nisa]]
 *** TODO Integrate GSM, Motor and everything else, final tests
-    DEADLINE: <2017-10-22 Sun>
+    DEADLINE: <2017-10-23 Mon>
     JOB: [[Dedipyaman]]
 *** TODO Get the remaining components
     JOB: [[Niket, Amartya]]
