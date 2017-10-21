@@ -42,24 +42,29 @@ bool detectDistanceChange(int lastDistance) {
    return abs(calculateDistance() - lastDistance) > 10;
 }
 int calculateDistance() {
-  
+
   long duration, distance;
-  /**
-   * Send the wave 
-   */
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
-  /**
-   * Receive the echo-ed wave
-   */
   duration = pulseIn(ECHO_PIN, HIGH);
-  /**
-   * Taking the analog value in meters
-   */
   distance = (duration/2) / 29.1;
 
-  return distance; 
+  Serial.println(distance);
+  if (distance >= 1000 || distance <= 2){
+    Serial.println("Out of range");
+  }
+  else {
+    Serial.print(distance);
+    Serial.println(" cm");
+  }
+
+  return 0;
+}
+
+bool pathClear() {
+
+  return calculateDistance() > 10;
 }

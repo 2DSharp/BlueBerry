@@ -18,6 +18,7 @@ int ldrCounter = 0;
  * Setting as global for the Ultrasonic to access
  */
 int lastDistance;
+int currentSpeed = 0;
 
 void setup() {
   /*
@@ -27,10 +28,22 @@ void setup() {
   /*
    * Initializing the modules.
    */
-  initLDRSensor();
+  //initLDRSensor();
   initUltrasonicSensor();
-  initPIRSensor();
+  //initPIRSensor();
   initMotorDriver();
+  //initGSMModule();
+}
+
+void loop() {
+  /* 
+   * Run the Arduino loop, we need a trigger from the bluetooth
+   * TODO: set up modes
+   */
+   Serial.println("Distance: ");
+   Serial.println(calculateDistance());
+
+  
 }
 /**
  * Checks if any state has been changed.
@@ -63,34 +76,17 @@ boolean hasStateChanged() {
    */
   return totalSensorValue >= 2;
 }
-
+/**
+ * Alerts user- vigilante mode
+ */
 void alert() {
 
   Serial.println("Anomaly detected");
+  sendSMSAlert("7005308234", "There was some problem detected around your device");
   /*bark();
-    sendSMSAlert();
+  
   */
 }
-void loop() {
-  /* 
-   * Run the Arduino loop, we need a trigger from the bluetooth
-   * TODO: set up modes
-   */
-  if (hasStateChanged()) {
-    
-    alert();
-  }
 
-  if (pathClear()) {
-
-    moveForward();
-  }
-  else {
-
-    brake();
-    lookAround();
-  }   
-
-}
 
 

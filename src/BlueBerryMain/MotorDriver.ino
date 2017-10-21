@@ -8,21 +8,15 @@
 /**
  * Motor one - LEFT
  */
-#define LEFT_SPEED = 10
-#define LEFT_FORWARD  = 9
-#define LEFT_BACKWARD = 8;
+#define LEFT_SPEED 6
+#define LEFT_FORWARD 7
+#define LEFT_BACKWARD 9
 /**
  * Motor two - RIGHT
  */
-#define RIGHT_SPEED = 5
-#define RIGHT_FORWARD = 7
-#define RIGHT_BACKWARD = 6
-/**
- * Even though I hate global variables.
- * Keep the currentSpeed globally accessible to accelerate and decelerate.
- * Will have to look for some Dependency Injection techniques.
- */
-int currentSpeed;
+#define RIGHT_SPEED 10
+#define RIGHT_FORWARD 11
+#define RIGHT_BACKWARD 13
 /**
  * Charge up the engine, set the right pins
  * Everything is in outputs
@@ -37,6 +31,7 @@ void initMotorDriver() {
   pinMode(LEFT_BACKWARD, OUTPUT);
   pinMode(RIGHT_FORWARD, OUTPUT);
   pinMode(RIGHT_BACKWARD, OUTPUT);  
+
 }
 /** 
  * Makes the vehicle move forward to the speed based on the controller.
@@ -44,7 +39,7 @@ void initMotorDriver() {
  * Forwards stay high, backwards stay low
  */
 void moveForward(int minSpeed, int maxSpeed) {
-n
+
   digitalWrite(LEFT_FORWARD, HIGH);
   digitalWrite(LEFT_BACKWARD, LOW);  
   digitalWrite(RIGHT_FORWARD, HIGH);
