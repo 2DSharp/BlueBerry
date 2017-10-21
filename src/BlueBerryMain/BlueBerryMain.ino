@@ -40,8 +40,15 @@ void loop() {
    * Run the Arduino loop, we need a trigger from the bluetooth
    * TODO: set up modes
    */
-   Serial.println("Distance: ");
-   Serial.println(calculateDistance());
+   int distance = calculateDistance();
+   if (distance > 10) {
+    moveForward(currentSpeed, 255);
+   }
+   else {
+    moveBackward( 255);
+   }
+   Serial.println(distance);
+   delay(500);
 
   
 }

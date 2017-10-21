@@ -50,14 +50,12 @@ void setup()
 
 void loop()
 {
-  
   static unsigned long timer = millis();
- 
-  if (millis() - timer > 3 000) {
+  
+  if (millis() - timer > 3000) {
     timer = millis();
     myDFPlayer.next();  //Play next mp3 every 3 second.
   }
-  
   
   if (myDFPlayer.available()) {
     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
@@ -118,4 +116,3 @@ void printDetail(uint8_t type, int value){
       break;
   }
 }
-

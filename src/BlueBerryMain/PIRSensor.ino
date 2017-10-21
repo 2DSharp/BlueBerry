@@ -18,7 +18,7 @@ long unsigned int lowIn;
  */
 #define PAUSE 500
 
-#define PIR_PIN 3
+#define PIR_PIN 48
 
 
 boolean lockLow = true;
