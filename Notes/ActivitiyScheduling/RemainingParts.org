@@ -1,11 +1,13 @@
 * Project BlueBerry
+  
+  Feel free to add items to the list using a similar 
+  Get it from NTR Complex
 
 ** Parts to be bought: [0%]
 
 *** TODO GlueGun 
 *** TODO Paint
-*** TODO MP3 Module
+*** TODO MP3/SD Card Module
 *** TODO Switch
-*** TODO Board (For torso)
-
-Feel free to add items to the list using a similar format
+*** TODO Plywood (For torso)
+*** TODO Single wire

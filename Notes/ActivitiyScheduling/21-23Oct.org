@@ -2,7 +2,7 @@
 
 ** Goals for 21st to 23rd October
 
-*** TODO Print the 3D Model and retrieve it
+*** TODO Print the 3D Model and retrieve it - In progress
     DEADLINE: <2017-10-21 Sat>
     JOB: [[Amartya, Dedipyaman]]
 *** TODO Final test the motor movements
