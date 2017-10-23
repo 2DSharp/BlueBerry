@@ -1,7 +1,7 @@
 * Project BlueBerry
 
-** Things that remain unsolved [0/3]
+** Things that remain unsolved [1/3]
 
    - [ ] Sound generation
-   - [ ] Power source
+   - [X] Power source
    - [ ] Bluetooth
