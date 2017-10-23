@@ -2,15 +2,15 @@
 
 ** Todo list for production ready code
 
-*** TODO Vigilante Mode [50%]
+*** TODO Vigilante Mode [100%]
 
     - [X] Check for disturbance
       - [X] Light
       - [X] Motion
       - [X] Distance
 
-    - [-] Alarm
-      - [ ] Noise alarm
+    - [X] Alarm
+      - [X] Noise alarm
       - [X] SMS alert
 
 *** TODO Walk Mode- Assistance for the blind [0%]

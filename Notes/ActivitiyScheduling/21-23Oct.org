@@ -1,6 +1,6 @@
 * Project BlueBerry
 
-** Goals for 21st to 23rd October [40%]
+** Goals for 21st to 23rd October [80%]
 
 *** DONE Print the 3D Model and retrieve it 
     CLOSED: [2017-10-21 Sat 20:07] DEADLINE: <2017-10-21 Sat>
@@ -15,9 +15,14 @@
     - CLOSING NOTE [2017-10-21 Sat 20:09] \\
       Pujitha, Nisa will start working on the motion tracking system
     JOB: [[Pujitha, Nisa]]
-*** TODO Integrate GSM, Motor and everything else, final tests
-    DEADLINE: <2017-10-23 Mon>
+*** DONE Integrate GSM, Motor and everything else, final tests
+    CLOSED: [2017-10-23 Mon 23:43] DEADLINE: <2017-10-23 Mon>
+    - CLOSING NOTE [2017-10-23 Mon 23:43] \\
+      Working just fine
     JOB: [[Dedipyaman]]
-*** TODO Get the remaining components
+*** DONE Get the remaining components
+    CLOSED: [2017-10-23 Mon 23:43]
+    - CLOSING NOTE [2017-10-23 Mon 23:43] \\
+      Got almost all of them, using buzzer instead of mp3 module
     JOB: [[Niket, Amartya]]
     DEADLINE: <2017-10-23 Mon>
