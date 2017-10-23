@@ -15,6 +15,13 @@
   http://www.arduino.cc/en/Tutorial/Tone
 */
 
+/**
+ * Edited for use in Project BlueBerry
+ * @author Dedipyaman Das
+ * github.com/2DSharp/BlueBerry
+ * @version 1.0/17 
+ */
+/**
 /*************************************************
  * Public Constants
  *************************************************/
