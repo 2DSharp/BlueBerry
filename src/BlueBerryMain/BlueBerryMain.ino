@@ -30,14 +30,15 @@ void setup() {
    * Initializing the modules.
    */
   pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+  initGSMMessageSender();
   initLDRSensor();
   initUltrasonicSensor();
   initPIRSensor();
   initMotorDriver();
-  //initGSMModule();
-  initGSMBus();
- 
+
   Serial.println("All set, let's roll!");
+  digitalWrite(ledPin, HIGH);
 }
 
 void loop() {
@@ -47,7 +48,8 @@ void loop() {
    */
    motionDetected = false;
    if (hasStateChanged()) {
-     digitalWrite(ledPin, HIGH);
+     alert();
+     delay(60000);
    }
 
    delay(500);
@@ -94,10 +96,8 @@ boolean hasStateChanged() {
 void alert() {
 
   Serial.println("Anomaly detected");
-  sendSMSAlert("7005308234", "There was some problem detected around your device");
-  /*bark();
-  
-  */
+  sendSMSAlert();
+  makeNoise();
 }
 
 

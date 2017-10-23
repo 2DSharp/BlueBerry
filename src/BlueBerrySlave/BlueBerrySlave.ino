@@ -17,12 +17,15 @@
 void setup() {
   
   Serial.begin(9600);
+  pinMode(13, OUTPUT);
+  digitalWrite(13, LOW);
   /**
    * GSM_TRIGGER comes out of the main Arduino Mega board
    * The input determines if an SMS is necessary
    */
   pinMode(GSM_TRIGGER, INPUT);
   initGSMModule();
+  digitalWrite(13, LOW);
 }
 
 void loop() {
@@ -30,8 +33,9 @@ void loop() {
    * The master control wants to alert the user
    */
   if (digitalRead(GSM_TRIGGER) == HIGH) {
+    digitalWrite(13, HIGH);
     /** Set the phone number to send the sms to and a not-so panicking attack.     **/
-    char number[15] = "7005308234";
+    char number[15] = "8414849149";
     char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
 
     if (sendSMSAlert(number, message)) {
@@ -45,5 +49,6 @@ void loop() {
       digitalWrite(NOTIFIER, HIGH);
     }
     
-  delay(1000);
+    delay(60000);
+  }
 }

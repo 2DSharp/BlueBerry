@@ -51,6 +51,7 @@ void initGSMModule() {
    */
   Serial.println("GSM initialized");
 }
+
 /**
  * Sending SMS
  * @param char[15]
@@ -78,5 +79,6 @@ bool sendSMSAlert(char number[15], char message[200]) {
    */
   sms.endSMS();
   Serial.println("\nCOMPLETE!\n");
+  delay(1000);
   return true;
 }
