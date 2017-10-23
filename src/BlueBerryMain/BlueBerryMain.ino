@@ -13,6 +13,7 @@
 int ledPin = 13;
 bool motionDetected;
 bool lightChanged;
+int previousLightState;
 int ldrCounter = 0;
 /**
  * Setting as global for the Ultrasonic to access
@@ -28,11 +29,15 @@ void setup() {
   /*
    * Initializing the modules.
    */
-  //initLDRSensor();
+  pinMode(ledPin, OUTPUT);
+  initLDRSensor();
   initUltrasonicSensor();
-  //initPIRSensor();
+  initPIRSensor();
   initMotorDriver();
   //initGSMModule();
+  initGSMBus();
+ 
+  Serial.println("All set, let's roll!");
 }
 
 void loop() {
@@ -40,17 +45,12 @@ void loop() {
    * Run the Arduino loop, we need a trigger from the bluetooth
    * TODO: set up modes
    */
-   int distance = calculateDistance();
-   if (distance > 10) {
-    moveForward(currentSpeed, 255);
+   motionDetected = false;
+   if (hasStateChanged()) {
+     digitalWrite(ledPin, HIGH);
    }
-   else {
-    moveBackward( 255);
-   }
-   Serial.println(distance);
-   delay(500);
 
-  
+   delay(500);
 }
 /**
  * Checks if any state has been changed.
@@ -60,13 +60,15 @@ boolean hasStateChanged() {
   /** 
    * Detecting any motion, light or distance change
    */
-  motionDetected = detectMotionChange();
+  detectMotionChange();
   /**
    * Putting a counter to start counting from the second iteration
    * Analog has fragile results
    */
-  ldrCounter++;
-  lightChanged = detectLightChange(ldrCounter, readLightState());
+  int currentLightState = readLightState(); 
+  int lightChanged = detectLightChange(previousLightState, currentLightState);
+  
+  previousLightState = currentLightState;
   
   int distanceChanged = detectDistanceChange(lastDistance);
   lastDistance = calculateDistance();
@@ -74,8 +76,11 @@ boolean hasStateChanged() {
    * We need 2 out of 3 to be confirmed of some anomaly.
    * The bitwise doesn't seem to be particularly performant
    */
+  Serial.println("Motion");
   Serial.println(motionDetected);
+  Serial.println("Light");
   Serial.println(lightChanged);
+  Serial.println("Distance");
   Serial.println(distanceChanged);
   int totalSensorValue = motionDetected + lightChanged + distanceChanged;
   /**

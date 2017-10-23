@@ -1,15 +1,19 @@
 * Project BlueBerry
 
-** Goals for 21st to 23rd October
+** Goals for 21st to 23rd October [40%]
 
-*** TODO Print the 3D Model and retrieve it - In progress
-    DEADLINE: <2017-10-21 Sat>
+*** DONE Print the 3D Model and retrieve it 
+    CLOSED: [2017-10-21 Sat 20:07] DEADLINE: <2017-10-21 Sat>
+    - CLOSING NOTE [2017-10-21 Sat 20:07] 
+      Test printed two legs successfully
     JOB: [[Amartya, Dedipyaman]]
 *** TODO Final test the motor movements
     DEADLINE: <2017-10-21 Sat>
     JOB: [[Niket, Dedipyaman]]
-*** TODO Introduction to the BlueBerry Codebase
-    DEADLINE: <2017-10-21 Sat>
+*** DONE Introduction to the BlueBerry Codebase
+    CLOSED: [2017-10-21 Sat 20:09] DEADLINE: <2017-10-21 Sat>
+    - CLOSING NOTE [2017-10-21 Sat 20:09] \\
+      Pujitha, Nisa will start working on the motion tracking system
     JOB: [[Pujitha, Nisa]]
 *** TODO Integrate GSM, Motor and everything else, final tests
     DEADLINE: <2017-10-23 Mon>

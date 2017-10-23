@@ -1,0 +1,25 @@
+* Project BlueBerry
+
+** Pin to module connection list for Arduino Mega board
+
+   :PROPERTIES:
+   :A0: LRD
+   :6 : Motor- LEFT_SPEED
+   :7 : Motor - RIGHT_SPEED
+   :9 : Servo
+   :12: Ultrasonic - TRIG
+   :13: Ultrasonic - ECHO
+   :40: GSM - Trigger
+   :41: GSM - Receiver
+   :48: PIR
+   :50: Motor - LEFT_FORWARD
+   :51: Motor - LEFT_BACKWARD
+   :52: Motor - RIGHT_BACKWARD
+   :53: Motor - RIGHT_FORWARD
+   
+** Pin to module connection list for Arduino Uno board
+
+   :PROPERTIES:
+   :2: GSM - TX
+   :3: GSM - RX
+   :6: Arduino mega input

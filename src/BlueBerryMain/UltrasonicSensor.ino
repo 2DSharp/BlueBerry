@@ -16,7 +16,7 @@ Trig to Arduino pin 12
 #define ECHO_PIN 13
 
 void initUltrasonicSensor() {
-  Serial.println("Starting Ultrasonic Sensor");
+  Serial.println("Initializing Ultrasonic Sensor...");
   /**
    * TRIG_PIN sends an ultrasonic wave
    */
@@ -29,6 +29,7 @@ void initUltrasonicSensor() {
    * Get a default value for beginning the loop
    */
   lastDistance = calculateDistance();
+  Serial.println("Ultrasonic sensor initialized");
 }
 /**
  * Returns true if a distance change was detected 
@@ -36,9 +37,9 @@ void initUltrasonicSensor() {
 bool detectDistanceChange(int lastDistance) {
   /**
    * The accuracy seems to be quite convincing
-   * 2 seems to be significant
+   * 10 seems to be significant
    */
-   Serial.println(lastDistance);
+  // Serial.println(lastDistance);
    return abs(calculateDistance() - lastDistance) > 10;
 }
 /**
@@ -69,6 +70,7 @@ int calculateDistance() {
   
   if (distance >= 300 || distance <= 2){
     Serial.println("Out of range");
+    
   }
   else {
 

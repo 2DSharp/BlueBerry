@@ -24,14 +24,13 @@ long unsigned int lowIn;
 boolean lockLow = true;
 boolean takeLowTime;
 
-
 int startTime;
 int stopTime;
 /*
  * Setting up the PIR
  */
 void initPIRSensor(){
-  Serial.println("Starting PIR Sensor");
+  Serial.println("Initializing PIR Sensor");
   pinMode(PIR_PIN, INPUT);
   digitalWrite(PIR_PIN, LOW);
 
@@ -45,71 +44,40 @@ void initPIRSensor(){
   }
   
   Serial.println(" done");
-  Serial.println("SENSOR ACTIVE");
+  Serial.println("PIR Sensor initialized");
   delay(50);
 }
 /*
  * Detect beginning of motion
  */
-bool detectMotionChange() {
+void detectMotionChange() {
 
-  return digitalRead(PIR_PIN) == HIGH ;
-}
-/* 
- * This keeps record of start and stop of motion
- */
-void PIRMotionCounter(bool motionDetect) {
-  /**
-   * Run it only if motion was detected
-   * Control inverted to the main calling function
-   */
-  if (motionDetect) {
+    if(digitalRead(PIR_PIN) == HIGH){
+
     if(lockLow){
-      /**
-       * Makes sure we wait for a transition to LOW before any further output is made.
-       */
+      //makes sure we wait for a transition to LOW before any further output is made:
       lockLow = false;
 
-      startTime = millis()/1000;
-      
-      Serial.println("---");
-      Serial.print("Motion detected at ");
-      Serial.print(startTime);
-      delay(1000);
-      Serial.println(" sec");
-      
+      motionDetected = true;
+      Serial.println("Motion detected");  
+      delay(1500);
+    }
+    takeLowTime = true;
+  }
+
+  if(digitalRead(PIR_PIN) == LOW){
+
+    if(takeLowTime){
+      lowIn = millis();          //save the time of the transition from high to LOW
+      takeLowTime = false;       //make sure this is only done at the start of a LOW phase
+    }
+    //if the sensor is low for more than the given pause,
+    //we assume that no more motion is going to happen
+    if(!lockLow && millis() - lowIn > PAUSE){
+      //makes sure this block of code is only executed again after
+      //a new motion sequence has been detected
+      lockLow = true;
       delay(50);
     }
-  takeLowTime = true;
-}
-
-if(digitalRead(PIR_PIN) == LOW){
-
-  if(takeLowTime){
-    /*
-     * Save the time of the transition from high to LOW
-     */
-    lowIn = millis();
-    /*
-     * Make sure this is only done at the start of a LOW phase
-     */
-    takeLowTime = false;       
   }
-  /*
-   * if the sensor is low for more than the given PAUSE,
-   * we assume that no more motion is going to happen
-   */
-  if(!lockLow && millis() - lowIn > PAUSE){
-    /* 
-     * makes sure this block of code is only executed again after
-     * a new motion sequence has been detected
-     */ 
-    lockLow = true;
-    stopTime = (millis() - PAUSE)/1000;
-    Serial.print("Motion ended at ");      
-
-    Serial.println(" sec");
-    delay(50);
-  }
- }
 }

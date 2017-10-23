@@ -24,7 +24,7 @@ GSM_SMS sms;
 
 void initGSMModule() {
   
-  Serial.println("SMS Messages Sender");
+  Serial.println("Initializing GSM Module...");
   /**
    * Set connection state to not connected first
    */

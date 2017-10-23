@@ -1,0 +1,32 @@
+* Project BlueBerry
+
+** Todo list for production ready code
+
+*** TODO Vigilante Mode [50%]
+
+    - [X] Check for disturbance
+      - [X] Light
+      - [X] Motion
+      - [X] Distance
+
+    - [-] Alarm
+      - [ ] Noise alarm
+      - [X] SMS alert
+
+*** TODO Walk Mode- Assistance for the blind [0%]
+    
+    - [-] Check for obstacles
+      - [X] Ultrasonic distance check
+      - [ ] Lookout
+
+    - [-] Locomotion
+      - [X] Forward/Backward movement
+      - [ ] Turning
+
+*** TODO Friendly RC bot [0%]
+
+    - [ ] Blueooth control
+    - [ ] Lights ON/OFF with change
+
+*** TODO Bluetooth master control [%]
+ 

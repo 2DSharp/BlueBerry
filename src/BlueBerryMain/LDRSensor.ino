@@ -15,12 +15,18 @@ int LDRReading;
 int initialReading;
 /**
  * Initializing the sensor with default values
+ * Since we are checking change.
  */
 void initLDRSensor() {
 
-  Serial.println("Starting LDR Sensor");
+  Serial.println("Initializing LDR Sensor...");
   pinMode(LDR_Pin, INPUT);
-  detectLightChange(0, readLightState());
+  /**
+   * Setting an initial reading for reference to the next iterations
+   */
+  previousLightState = readLightState();
+  delay(2000);
+  Serial.println("LDR initialized");
 }
 /**
  * Reads the current analog value of the input light source
@@ -32,15 +38,9 @@ int readLightState(){
 /**
  * Check if any significant light change
  */
-bool detectLightChange(int counter, int lastReading) {
-  /* *NEEDS TO BE FIXED!* */
-  Serial.println("Light: ");
-
-  if (abs(lastReading - readLightState()) > 0) {
-    Serial.println("Light changed!");
+ bool detectLightChange(int lastReading, int currentReading) {
+  
+  int change = abs(lastReading - currentReading);
+  return change > 10;
   }
-  if (counter > 2) {
-    return (abs(lastReading - readLightState())) > 100;
-  }
-}
 

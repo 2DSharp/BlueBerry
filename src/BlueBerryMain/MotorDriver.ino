@@ -23,14 +23,15 @@
  */
 void initMotorDriver() {
 
-  Serial.println("Starting engine!");
+  Serial.println("Starting motor engine...");
   pinMode(LEFT_SPEED, OUTPUT);
   pinMode(RIGHT_SPEED, OUTPUT);
 
   pinMode(LEFT_FORWARD, OUTPUT);
   pinMode(LEFT_BACKWARD, OUTPUT);
   pinMode(RIGHT_FORWARD, OUTPUT);
-  pinMode(RIGHT_BACKWARD, OUTPUT);  
+  pinMode(RIGHT_BACKWARD, OUTPUT);
+  Serial.println("Motors active");
 
 }
 /** 
