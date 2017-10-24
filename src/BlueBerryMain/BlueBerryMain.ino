@@ -36,7 +36,7 @@ void setup() {
   initUltrasonicSensor();
   initPIRSensor();
   initMotorDriver();
-
+  
   Serial.println("All set, let's roll!");
   digitalWrite(ledPin, HIGH);
 }
@@ -51,7 +51,7 @@ void loop() {
      alert();
      delay(60000);
    }
-
+   
    delay(500);
 }
 /**
@@ -99,6 +99,16 @@ void alert() {
   sendSMSAlert();
   makeNoise();
 }
-
-
-
+/**
+ * The friendly walk mode is basically an obstacle avoiding mode
+ * Can be used for taking the dog out for a walk.
+ * Guidance for the blind, if you may.
+ */
+void walkMode() {
+  
+  if (pathClear()) {
+    
+    moveForward(currentSpeed, 255);
+    currentSpeed = getCurrentSpeed();
+  }
+}

@@ -13,7 +13,7 @@
 #define LEFT_BACKWARD 51
 /**
  * Motor two - RIGHT
-*/
+ */
 #define RIGHT_SPEED 7
 #define RIGHT_FORWARD 53
 #define RIGHT_BACKWARD 52
@@ -21,6 +21,8 @@
  * Charge up the engine, set the right pins
  * Everything is in outputs
  */
+int currentSpeed;
+
 void initMotorDriver() {
 
   Serial.println("Starting motor engine...");
@@ -54,7 +56,7 @@ void moveForward(int minSpeed, int maxSpeed) {
     analogWrite(RIGHT_SPEED, i);
     analogWrite(LEFT_SPEED, i);
     delay(15);
-  } 
+  }
 }
 /**
  * Reverse motion, just in case
@@ -77,6 +79,14 @@ void moveBackward(int speed) {
     analogWrite(LEFT_SPEED, i);
     delay(40);
   } 
+}
+/**
+ * Getter for the current speed of the motor
+ * I can't stand global variables between scopes, sorry
+ */
+int getCurrentSpeed() {
+
+  return currentSpeed;
 }
 /** 
  * Turns the vehicle to the left
