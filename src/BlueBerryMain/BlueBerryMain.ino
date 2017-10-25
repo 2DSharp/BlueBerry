@@ -10,6 +10,10 @@
  * This program runs the Arduino Mega and is responsible for running
  * the entire robot.
  */
+#define LEFT 1
+#define RIGHT 2
+#define RECEIVER 23
+
 int ledPin = 13;
 bool motionDetected;
 bool lightChanged;
@@ -20,7 +24,7 @@ int ldrCounter = 0;
  */
 int lastDistance;
 int currentSpeed = 0;
-
+int direction;
 void setup() {
   /*
    * Beginning the Serial.
@@ -36,6 +40,7 @@ void setup() {
   initUltrasonicSensor();
   initPIRSensor();
   initMotorDriver();
+  initServo();
   
   Serial.println("All set, let's roll!");
   digitalWrite(ledPin, HIGH);
@@ -46,13 +51,33 @@ void loop() {
    * Run the Arduino loop, we need a trigger from the bluetooth
    * TODO: set up modes
    */
-   motionDetected = false;
-   if (hasStateChanged()) {
-     alert();
-     delay(60000);
-   }
-   
+   walkMode();
    delay(500);
+}
+/**
+ * Vigilante mode
+ * Intrusion detection and notification system
+ */
+void vigilanteMode() {
+  /**
+   * The notification was sent
+   * Make some noise till they ask you to stop
+   */
+  if (digitalRead(RECEIVER) == HIGH) {
+
+    stopAlert();
+    makeNoise();
+    return;
+  }
+  /**
+   * Keep checking if some motion was detected
+   */
+  motionDetected = false;
+  if (hasStateChanged()) {
+    Serial.println("Anomaly detected");
+    sendAlert();
+    delay(60000);
+  }
 }
 /**
  * Checks if any state has been changed.
@@ -95,9 +120,6 @@ boolean hasStateChanged() {
  */
 void alert() {
 
-  Serial.println("Anomaly detected");
-  sendSMSAlert();
-  makeNoise();
 }
 /**
  * The friendly walk mode is basically an obstacle avoiding mode
@@ -105,10 +127,55 @@ void alert() {
  * Guidance for the blind, if you may.
  */
 void walkMode() {
-  
+  /**
+   * Keep moving forward as long as the path is clear
+   */
   if (pathClear()) {
     
     moveForward(currentSpeed, 255);
-    currentSpeed = getCurrentSpeed();
+    currentSpeed = getMotorSpeed();
+  }
+  
+  else {
+
+    brake(1000);
+    Serial.println("Braking");
+    /**
+     * Analyse
+     */
+    if (lookLeft()) {
+
+      returnToMean();
+      steer(LEFT);
+    }
+
+    else if (lookRight()) {
+
+      returnToMean();
+      steer(RIGHT);
+    }
+    else {
+      
+      moveBackward(100);
+    }
+  }
+}
+/**
+ * Steers the locomotive with the predetermined side
+ * Use ultrasonic to see path clearance
+ */
+void steer(int direction) {
+  /**
+   * The ultrasonic keeps looking from the mean position for clearance
+   */
+  if (!pathClear()){
+    
+    turn(direction);
+    steer(direction);
+  }
+  
+  else {
+
+    brake(1000);
   }
 }

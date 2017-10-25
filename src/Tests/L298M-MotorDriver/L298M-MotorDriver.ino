@@ -1,12 +1,12 @@
 // connect motor controller pins to Arduino digital pins
 // motor one
-int enA = 10;
-int in1 = 9;
-int in2 = 8;
+int enA = 6;
+int in1 = 50;
+int in2 = 51;
 // motor two
-int enB = 5;
-int in3 = 7;
-int in4 = 6;
+int enB = 7;
+int in3 = 52;
+int in4 = 53;
 void setup()
 {
   // set all the motor control pins to outputs
@@ -32,7 +32,7 @@ void demoOne()
    //set speed to 200 out of possible range 0~255
   analogWrite(enA, 500);
 
-  delay(1000);
+  //delay(1000);
   Serial.println("turn on motor B");
 
   
@@ -45,20 +45,13 @@ void demoOne()
   
   delay(2000);
   
-  Serial.println("now change motor directions");
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);  
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH); 
-  
-  delay(2000);
-  
   Serial.println("now turn off motors");
   
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);  
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
+  delay(10000);
 }
 void demoTwo()
 {
@@ -96,8 +89,9 @@ void demoTwo()
 void loop()
 {
   demoOne();
-  delay(2000);
+/*  delay(2000);
   Serial.println("Redoing. Waaaait! ");
   demoTwo();
   delay(1000);
+*/
 }

@@ -37,9 +37,9 @@ int readLightState(){
 /**
  * Check if any significant light change
  */
- bool detectLightChange(int lastReading, int currentReading) {
+bool detectLightChange(int lastReading, int currentReading) {
   
   int change = abs(lastReading - currentReading);
   return change > 10;
-  }
+}
 

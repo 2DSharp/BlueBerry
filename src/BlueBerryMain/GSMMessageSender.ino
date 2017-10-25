@@ -12,24 +12,26 @@
  * This uno runs independently, checks if the other board wants to send an SMS
  */
 #define TRIGGER 22
-#define RECEIVER 23
 
 void initGSMMessageSender() {
 
-  Serial.println("Starting SMS interface");
+  Serial.println("Starting GSM interface");
   pinMode(TRIGGER, OUTPUT);
   digitalWrite(TRIGGER, LOW);
-  Serial.println("Initialized SMS interface");
+  Serial.println("Initialized GSM interface");
 }
 /**
  * Talk to the other Arduino
  */
-boolean sendSMSAlert() {
+void sendAlert() {
 
   digitalWrite(TRIGGER, HIGH);
   delay(10000);
-  if (digitalRead(RECEIVER) == HIGH) {
-    return true;
-  }
 }
+/**
+ * To avoid continual alerts to the user
+ */
+void stopAlert() {
 
+  digitalWrite(TRIGGER, HIGH);
+}

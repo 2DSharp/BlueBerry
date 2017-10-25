@@ -21,7 +21,7 @@
  * Charge up the engine, set the right pins
  * Everything is in outputs
  */
-int currentSpeed;
+int motorSpeed;
 
 void initMotorDriver() {
 
@@ -52,7 +52,7 @@ void moveForward(int minSpeed, int maxSpeed) {
    */
   for (int i = minSpeed; i < maxSpeed; i++)  {
 
-    currentSpeed = i;
+    motorSpeed = i;
     analogWrite(RIGHT_SPEED, i);
     analogWrite(LEFT_SPEED, i);
     delay(15);
@@ -74,7 +74,7 @@ void moveBackward(int speed) {
    */
   for (int i = 0; i < speed; i++)  {
     
-    currentSpeed = i;
+    motorSpeed = i;
     analogWrite(RIGHT_SPEED, i);
     analogWrite(LEFT_SPEED, i);
     delay(40);
@@ -84,9 +84,21 @@ void moveBackward(int speed) {
  * Getter for the current speed of the motor
  * I can't stand global variables between scopes, sorry
  */
-int getCurrentSpeed() {
+int getMotorSpeed() {
 
-  return currentSpeed;
+  return motorSpeed;
+}
+/**
+ * Turns depending on the availability of space
+ */
+void turn(int direction) {
+
+  if (direction == 1) {
+    turnForwardLeft();
+  }
+  else if (direction == 2) {
+    turnForwardRight();
+  }
 }
 /** 
  * Turns the vehicle to the left
@@ -101,8 +113,9 @@ void turnForwardLeft() {
   digitalWrite(RIGHT_FORWARD, HIGH);
   digitalWrite(RIGHT_BACKWARD, LOW); 
   
-  analogWrite(LEFT_SPEED, 10);
-  analogWrite(RIGHT_SPEED, 100);
+  analogWrite(LEFT_SPEED, 0);
+  analogWrite(RIGHT_SPEED, 150);
+  delay(1000);
 }
 /** 
  * Turns the vehicle to the right
@@ -115,24 +128,25 @@ void turnForwardRight() {
   digitalWrite(RIGHT_FORWARD, HIGH);
   digitalWrite(RIGHT_BACKWARD, LOW); 
 
-  analogWrite(RIGHT_SPEED, 10);
-  analogWrite(LEFT_SPEED, 100);
+  analogWrite(RIGHT_SPEED, 0);
+  analogWrite(LEFT_SPEED, 150);
 }
 /**
  * Stops the vehicle gradually depending on the current speed.
  */
-void brake() {
+void brake(int duration) {
   /**
    * Gradual deceleration from maximum speed to zero
    */
-  for (int i = currentSpeed ; i >= 0; --i) {
+  for (int i = motorSpeed ; i >= 0; --i) {
 
     analogWrite(RIGHT_SPEED, i);
     analogWrite(LEFT_SPEED, i);
-    delay(10);
+    delay(0);
 
-    currentSpeed = i;
+    motorSpeed = i;
   }
+  delay(duration);
 }
 /**
  * To be called just in case an obstacle comes out of nowhere

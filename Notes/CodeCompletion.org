@@ -13,11 +13,11 @@
       - [X] Noise alarm
       - [X] SMS alert
 
-*** TODO Walk Mode- Assistance for the blind [0%]
+*** TODO Walk Mode [50%]
     
-    - [-] Check for obstacles
+    - [X] Check for obstacles
       - [X] Ultrasonic distance check
-      - [ ] Lookout
+      - [X] Look around
 
     - [-] Locomotion
       - [X] Forward/Backward movement

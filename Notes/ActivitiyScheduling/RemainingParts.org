@@ -3,11 +3,11 @@
   Feel free to add items to the list using a similar 
   Get it from NTR Complex
 
-** Parts to be bought: [0%]
+** Parts to be bought: [83%]
    
-   - [ ] Gluegun
+   - [X] Gluegun
    - [ ] Paint
-   - [ ] MP3/SD Card Module
-   - [ ] Switch
-   - [ ] Plywood (For torso)
-   - [ ] Single Wire
+   - [X] MP3/SD Card Module - Buzzer instead
+   - [X] Switch
+   - [X] Plywood (For torso) - Card board instead
+   - [X] Single Wire

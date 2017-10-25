@@ -21,6 +21,11 @@
  */
 GSM gsmAccess;
 GSM_SMS sms;
+GSMVoiceCall vcs;
+/**
+ * The calling number to the GSM module
+ */
+char numtel[20];
 
 void initGSMModule() {
   
@@ -51,7 +56,6 @@ void initGSMModule() {
    */
   Serial.println("GSM initialized");
 }
-
 /**
  * Sending SMS
  * @param char[15]
@@ -82,3 +86,71 @@ bool sendSMSAlert(char number[15], char message[200]) {
   delay(1000);
   return true;
 }
+/**
+ * Calling the user, cut it once received
+ */
+ bool fakePhoneCall(char number[15]) {
+ /**
+   * Get the phone number as a dependency
+   */
+  Serial.print("Calling to : ");
+  Serial.println(number);
+  Serial.println();
+
+    // Check if the receiving end has picked up the call
+  if (vcs.voiceCall(number)) {
+    Serial.println("Call Established. Cutting the line once someone receives it");
+    delay(1000);
+    /**
+     * Hanging up the call once they pick up
+     */
+    if (vcs.getvoiceCallStatus() == TALKING);
+    
+    vcs.hangCall();
+    Serial.println("Call completed");
+    return true;
+  }
+ }
+ 
+ bool receivePhoneCallFromSpecificNumber(char number[15]) {
+  /**
+   * Get the phone number as a dependency
+   */
+   switch (vcs.getvoiceCallStatus()) {
+    case IDLE_CALL:
+      /** 
+       *  Nothing's going on
+       */
+      break;
+
+    case RECEIVINGCALL: 
+      /**
+       * Someone's calling
+       */
+      Serial.println("RECEIVING CALL");
+
+      // Retrieve the calling number
+      vcs.retrieveCallingNumber(numtel, 15);
+
+      // Print the calling number
+      Serial.print("Number:");
+      Serial.println(numtel);
+      /**
+       * The calling number is same as the expected number
+       */
+      if (strcmp(number,numtel) == 0) {
+        
+        vcs.hangCall();
+        return true;
+      }
+      vcs.hangCall();
+      break;
+
+    case TALKING:  // In this case the call would be established
+
+      vcs.hangCall();
+      Serial.println("Hanging up and waiting for the next call.");
+      break;
+  }
+  delay(1000);
+ }

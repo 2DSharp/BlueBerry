@@ -1,5 +1,5 @@
 /**
- * Interface for the GSM module and the main arduino
+ * Runs the servo
  * @author Dedipyaman Das
  * github.com/2DSharp/BlueBerry
  * @version 1.0/17 
@@ -10,36 +10,51 @@ Servo HorizontalServo;
 /**
  * Initializing position from 0
  */
-int pos = 0;    
+int pos = 90;    
+boolean clear;
 
 void initServo() {
+  Serial.println("Initializing servo...");
   /** 
    * HorizontalServo goes to pin 9
    */
-  HorizontalServo.attach(9); 
+  HorizontalServo.attach(9);
+  HorizontalServo.write(90);
+  Serial.println("Servo initialized");
 }
 
-void horizontalLookOut(bool pause) {
-  /**
-   * Check if some one wants to pause the movement
-   */
-  if (pause == false) {
-    /**
-     * Keep looking around 0 to 180 degrees
-     */
-    for (pos = 0; pos <= 180; pos++) {
+boolean lookLeft() {
+  
+  for (pos = 90; pos >= 0; pos--) {
     
-      HorizontalServo.write(pos);
-      // The speed
-      delay(15);
-    }
-    /**
-     * Come back from 180 to 0 degrees
-     */
-    for (pos = 180; pos >= 0; pos--) {
+    HorizontalServo.write(pos);
+    // The speed
+    if (pathClear()) {
 
-      HorizontalServo.write(pos);
-      delay(15);
+      clear = true;
     }
+    delay(12);
   }
+
+  return clear;
+}
+boolean lookRight() {
+  
+  for (pos = 90; pos <= 180; pos++) {
+
+    HorizontalServo.write(pos);
+    if (pathClear()) {
+
+      clear = true;
+    }
+    delay(12);
+  }
+
+  return clear;
+  }
+
+void returnToMean() {
+
+  HorizontalServo.write(90);
+  delay(1000);
 }

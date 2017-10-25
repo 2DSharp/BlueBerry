@@ -6,6 +6,7 @@
    :A0: LRD
    :6 : Motor- LEFT_SPEED
    :7 : Motor - RIGHT_SPEED
+   :8 : Buzzer
    :9 : Servo
    :12: Ultrasonic - TRIG
    :13: Ultrasonic - ECHO
@@ -23,3 +24,4 @@
    :2: GSM - TX
    :3: GSM - RX
    :6: Arduino mega input
+   :7: Arduino mega notifier

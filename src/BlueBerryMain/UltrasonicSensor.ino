@@ -15,6 +15,7 @@ Trig to Arduino pin 12
 #define TRIG_PIN 12 
 #define ECHO_PIN 13
 
+
 void initUltrasonicSensor() {
   Serial.println("Initializing Ultrasonic Sensor...");
   /**
@@ -77,8 +78,11 @@ int calculateDistance() {
     return distance;
   }
 }
+/**
+ * Checks if the path is clear right in front
+ * 30 CM (a feet) seems reasonable.
+ */
+ bool pathClear() {
 
-bool pathClear() {
-
-  return calculateDistance() > 10;
+  return calculateDistance() > 30;
 }

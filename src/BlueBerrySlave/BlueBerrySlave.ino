@@ -26,29 +26,42 @@ void setup() {
   pinMode(GSM_TRIGGER, INPUT);
   initGSMModule();
   digitalWrite(13, LOW);
+  digitalWrite(NOTIFIER, LOW);
 }
 
 void loop() {
+  
+  digitalWrite(NOTIFIER, LOW);
+  /**
+   * Set the phone number to send the sms to and a not-so panicking attack.      */
+  char number[15] = "8414849149";
+  char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
+ /**
+  * Cancel the alarm?
+  */
+ if (receivePhoneCallFromSpecificNumber(number)) {
+
+   digitalWrite(NOTIFIER, LOW);
+ }
   /**
    * The master control wants to alert the user
    */
   if (digitalRead(GSM_TRIGGER) == HIGH) {
     digitalWrite(13, HIGH);
-    /** Set the phone number to send the sms to and a not-so panicking attack.     **/
-    char number[15] = "8414849149";
-    char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
-
-    if (sendSMSAlert(number, message)) {
+ 
+    if (sendSMSAlert(number, message) && fakePhoneCall(number)) {
       /**
        * Maybe notify the main board about the success?
        */
       digitalWrite(NOTIFIER, HIGH);
 
     } else {
-
-      digitalWrite(NOTIFIER, HIGH);
+      /**
+       * The alert failed, try again
+       */
+      digitalWrite(NOTIFIER, LOW);
+      loop();
     }
-    
-    delay(60000);
   }
+  delay(1000);
 }
