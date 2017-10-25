@@ -18,6 +18,7 @@ void initGSMMessageSender() {
   Serial.println("Starting GSM interface");
   pinMode(TRIGGER, OUTPUT);
   digitalWrite(TRIGGER, LOW);
+  pinMode(RECEIVER, INPUT);
   Serial.println("Initialized GSM interface");
 }
 /**

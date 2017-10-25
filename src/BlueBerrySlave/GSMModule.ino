@@ -30,6 +30,7 @@ char numtel[20];
 void initGSMModule() {
   
   Serial.println("Initializing GSM Module...");
+  
   /**
    * Set connection state to not connected first
    */

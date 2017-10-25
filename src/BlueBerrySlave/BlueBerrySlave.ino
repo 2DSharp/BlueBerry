@@ -25,14 +25,13 @@ void setup() {
    * The input determines if an SMS is necessary
    */
   pinMode(GSM_TRIGGER, INPUT);
+  pinMode(NOTIFIER, OUTPUT);
   initGSMModule();
   digitalWrite(13, LOW);
   digitalWrite(NOTIFIER, LOW);
 }
 
 void loop() {
-  
-  digitalWrite(NOTIFIER, LOW);
   /**
    * Set the phone number to send the sms to and a not-so panicking attack.      */
   char number[15] = "7005308234";
