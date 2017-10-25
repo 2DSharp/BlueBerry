@@ -69,20 +69,18 @@ int calculateDistance() {
    */
   distance = (duration/2) / 29.1;
   
-  if (distance >= 300 || distance <= 2){
-    Serial.println("Out of range");
-    
-  }
-  else {
-
-    return distance;
-  }
+  return distance;
 }
 /**
  * Checks if the path is clear right in front
  * 30 CM (a feet) seems reasonable.
  */
  bool pathClear() {
+  
+  if (calculateDistance() > 30) {
 
-  return calculateDistance() > 30;
+    Serial.println("Path is clear");
+    return true;
+  }
+  return false;
 }

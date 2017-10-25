@@ -96,7 +96,7 @@ bool sendSMSAlert(char number[15], char message[200]) {
   Serial.print("Calling to : ");
   Serial.println(number);
   Serial.println();
-
+  bool callSuccess = false;
     // Check if the receiving end has picked up the call
   if (vcs.voiceCall(number)) {
     Serial.println("Call Established. Cutting the line once someone receives it");
@@ -108,8 +108,10 @@ bool sendSMSAlert(char number[15], char message[200]) {
     
     vcs.hangCall();
     Serial.println("Call completed");
-    return true;
+    callSuccess = true;
   }
+  delay(20000);
+  return callSuccess;
  }
  
  bool receivePhoneCallFromSpecificNumber(char number[15]) {

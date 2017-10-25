@@ -9,14 +9,14 @@
  * Motor one - LEFT
  */
 #define LEFT_SPEED 6
-#define LEFT_FORWARD 50
-#define LEFT_BACKWARD 51
+#define LEFT_FORWARD 51
+#define LEFT_BACKWARD 50
 /**
  * Motor two - RIGHT
  */
 #define RIGHT_SPEED 7
 #define RIGHT_FORWARD 53
-#define RIGHT_BACKWARD 52
+#define RIGHT_BACKWARD 50
 /**
  * Charge up the engine, set the right pins
  * Everything is in outputs

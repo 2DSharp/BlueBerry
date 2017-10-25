@@ -13,15 +13,15 @@
       - [X] Noise alarm
       - [X] SMS alert
 
-*** TODO Walk Mode [50%]
+*** TODO Walk Mode [100%]
     
     - [X] Check for obstacles
       - [X] Ultrasonic distance check
       - [X] Look around
 
-    - [-] Locomotion
+    - [X] Locomotion
       - [X] Forward/Backward movement
-      - [ ] Turning
+      - [X] Turning
 
 *** TODO Friendly RC bot [0%]
 

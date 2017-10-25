@@ -11,7 +11,6 @@ Servo HorizontalServo;
  * Initializing position from 0
  */
 int pos = 90;    
-boolean clear;
 
 void initServo() {
   Serial.println("Initializing servo...");
@@ -24,33 +23,35 @@ void initServo() {
 }
 
 boolean lookLeft() {
-  
+
+  boolean clearPath = false;
   for (pos = 90; pos >= 0; pos--) {
     
     HorizontalServo.write(pos);
     // The speed
     if (pathClear()) {
-
-      clear = true;
+      Serial.println("Left is clear");
+      clearPath = true;
     }
-    delay(12);
+    delay(15);
   }
 
-  return clear;
+  return clearPath;
 }
 boolean lookRight() {
-  
+  boolean clearPath = false;
   for (pos = 90; pos <= 180; pos++) {
 
     HorizontalServo.write(pos);
     if (pathClear()) {
-
-      clear = true;
+      
+      Serial.println("Right is clear");
+      clearPath = true;
     }
-    delay(12);
+    delay(15);
   }
 
-  return clear;
+  return clearPath;
   }
 
 void returnToMean() {

@@ -14,6 +14,7 @@
 #define GSM_TRIGGER 6
 #define NOTIFIER 7
 
+int counter = 0;
 void setup() {
   
   Serial.begin(9600);
@@ -34,7 +35,7 @@ void loop() {
   digitalWrite(NOTIFIER, LOW);
   /**
    * Set the phone number to send the sms to and a not-so panicking attack.      */
-  char number[15] = "8414849149";
+  char number[15] = "7005308234";
   char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
  /**
   * Cancel the alarm?
@@ -53,12 +54,15 @@ void loop() {
       /**
        * Maybe notify the main board about the success?
        */
+       
+       //delay(600000);
       digitalWrite(NOTIFIER, HIGH);
 
     } else {
       /**
        * The alert failed, try again
        */
+      Serial.println("Alert failed, trying again");
       digitalWrite(NOTIFIER, LOW);
       loop();
     }

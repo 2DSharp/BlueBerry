@@ -51,7 +51,8 @@ void loop() {
    * Run the Arduino loop, we need a trigger from the bluetooth
    * TODO: set up modes
    */
-   walkMode();
+   vigilanteMode();
+   //walkMode();
    delay(500);
 }
 /**
@@ -76,7 +77,7 @@ void vigilanteMode() {
   if (hasStateChanged()) {
     Serial.println("Anomaly detected");
     sendAlert();
-    delay(60000);
+    //delay(60000);
   }
 }
 /**
@@ -143,21 +144,22 @@ void walkMode() {
     /**
      * Analyse
      */
-    if (lookLeft()) {
+    int clearDirection;
+    bool val;
+    if (lookRight()) {
+      //Serial.println(val);
+      returnToMean();
+      clearDirection = RIGHT;
+    }
+
+    else if (lookLeft()) {
 
       returnToMean();
-      steer(LEFT);
+      clearDirection = LEFT;
     }
 
-    else if (lookRight()) {
-
-      returnToMean();
-      steer(RIGHT);
-    }
-    else {
-      
-      moveBackward(100);
-    }
+    returnToMean();
+    steer(clearDirection);
   }
 }
 /**

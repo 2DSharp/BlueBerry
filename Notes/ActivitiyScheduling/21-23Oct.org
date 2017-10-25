@@ -1,14 +1,16 @@
 * Project BlueBerry
 
-** Goals for 21st to 23rd October [80%]
+** Goals for 21st to 23rd October [100%]
 
 *** DONE Print the 3D Model and retrieve it 
     CLOSED: [2017-10-21 Sat 20:07] DEADLINE: <2017-10-21 Sat>
     - CLOSING NOTE [2017-10-21 Sat 20:07] 
       Test printed two legs successfully
     JOB: [[Amartya, Dedipyaman]]
-*** TODO Final test the motor movements
-    DEADLINE: <2017-10-21 Sat>
+*** DONE Final test the motor movements
+    CLOSED: [2017-10-25 Wed 23:19] DEADLINE: <2017-10-21 Sat>
+    - CLOSING NOTE [2017-10-25 Wed 23:19] \\
+      Logic finalized, working fine
     JOB: [[Niket, Dedipyaman]]
 *** DONE Introduction to the BlueBerry Codebase
     CLOSED: [2017-10-21 Sat 20:09] DEADLINE: <2017-10-21 Sat>
