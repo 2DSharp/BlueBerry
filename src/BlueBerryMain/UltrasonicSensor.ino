@@ -75,9 +75,9 @@ int calculateDistance() {
  * Checks if the path is clear right in front
  * 30 CM (a feet) seems reasonable.
  */
- bool pathClear() {
+ bool pathClear(int limit) {
   
-  if (calculateDistance() > 30) {
+  if (calculateDistance() > limit) {
 
     Serial.println("Path is clear");
     return true;

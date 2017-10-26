@@ -35,6 +35,7 @@ void setup() {
    */
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
+  pinMode(RECEIVER, INPUT);
   initGSMMessageSender();
   initLDRSensor();
   initUltrasonicSensor();
@@ -64,20 +65,26 @@ void vigilanteMode() {
    * The notification was sent
    * Make some noise till they ask you to stop
    */
+  //Serial.println(digitalRead(RECEIVER));
   if (digitalRead(RECEIVER) == HIGH) {
-
-    stopAlert();
+    Serial.println("Receiver is high");
+  //  stopAlert();
     makeNoise();
-    return;
+    
+    //return;
   }
   /**
    * Keep checking if some motion was detected
    */
-  motionDetected = false;
-  if (hasStateChanged()) {
-    Serial.println("Anomaly detected");
-    sendAlert();
-    //delay(60000);
+  else {
+    Serial.println("Receiver is low");
+    motionDetected = false;
+    if (hasStateChanged()) {
+      Serial.println("Anomaly detected");
+      sendAlert();
+     //delay(60000);
+    }
+    noTone(8); 
   }
 }
 /**
@@ -131,7 +138,7 @@ void walkMode() {
   /**
    * Keep moving forward as long as the path is clear
    */
-  if (pathClear()) {
+  if (pathClear(30)) {
     
     moveForward(currentSpeed, 255);
     currentSpeed = getMotorSpeed();
@@ -141,6 +148,9 @@ void walkMode() {
 
     brake(1000);
     Serial.println("Braking");
+    moveBackward(100);
+    delay(2000);
+    brake(1000);
     /**
      * Analyse
      */
@@ -170,7 +180,7 @@ void steer(int direction) {
   /**
    * The ultrasonic keeps looking from the mean position for clearance
    */
-  if (!pathClear()){
+  if (!pathClear(30)){
     
     turn(direction);
     steer(direction);

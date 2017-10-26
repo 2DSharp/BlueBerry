@@ -18,21 +18,20 @@ void initGSMMessageSender() {
   Serial.println("Starting GSM interface");
   pinMode(TRIGGER, OUTPUT);
   digitalWrite(TRIGGER, LOW);
-  pinMode(RECEIVER, INPUT);
   Serial.println("Initialized GSM interface");
 }
 /**
  * Talk to the other Arduino
  */
 void sendAlert() {
-
+  Serial.println("Sending alert");
   digitalWrite(TRIGGER, HIGH);
-  delay(10000);
+  //delay(10000);
 }
 /**
  * To avoid continual alerts to the user
  */
 void stopAlert() {
-
-  digitalWrite(TRIGGER, HIGH);
+  
+  //digitalWrite(TRIGGER, LOW);
 }

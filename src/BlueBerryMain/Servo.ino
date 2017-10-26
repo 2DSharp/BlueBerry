@@ -21,7 +21,9 @@ void initServo() {
   HorizontalServo.write(90);
   Serial.println("Servo initialized");
 }
-
+/**
+ * Looks left to find if path is clear
+ */
 boolean lookLeft() {
 
   boolean clearPath = false;
@@ -29,7 +31,7 @@ boolean lookLeft() {
     
     HorizontalServo.write(pos);
     // The speed
-    if (pathClear()) {
+    if (pathClear(30)) {
       Serial.println("Left is clear");
       clearPath = true;
     }
@@ -38,12 +40,15 @@ boolean lookLeft() {
 
   return clearPath;
 }
+/**
+ * Looks right to find if path is clear
+ */
 boolean lookRight() {
   boolean clearPath = false;
   for (pos = 90; pos <= 180; pos++) {
 
     HorizontalServo.write(pos);
-    if (pathClear()) {
+    if (pathClear(30)) {
       
       Serial.println("Right is clear");
       clearPath = true;
@@ -53,7 +58,9 @@ boolean lookRight() {
 
   return clearPath;
   }
-
+/**
+ * Mean positioning to keep the head straight
+ */
 void returnToMean() {
 
   HorizontalServo.write(90);
