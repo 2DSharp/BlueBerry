@@ -1,193 +1,192 @@
 /**
- * Project BlueBerry Main controller
+ * Interface for the GSM module and the main arduino
  * @author Dedipyaman Das
  * github.com/2DSharp/BlueBerry
  * @version 1.0/17 
  */
 /**
- * Project BlueBerry's main sketch that integrates the other sketches
- * Upon compilation, it automagically includes all the dependencies.
- * This program runs the Arduino Mega and is responsible for running
- * the entire robot.
+ * This is not necessary
+ * But since the main arduino connections went messy
+ * And for some reason the GSM wasn't working with that one
+ * Also that we had an extra Uno
+ * This uno runs independently, checks if the other board wants to send an SMS
  */
-#define LEFT 1
-#define RIGHT 2
-#define RECEIVER 23
+#include <Wire.h>
 
-int ledPin = 13;
-bool motionDetected;
-bool lightChanged;
-int previousLightState;
-int ldrCounter = 0;
-/**
- * Setting as global for the Ultrasonic to access
- */
-int lastDistance;
-int currentSpeed = 0;
-int direction;
+#define GSM_TRIGGER 6
+#define NOTIFIER 7
+//#define VIGILANCE 8
+//#define WALK 9
+#define RESET 10
+char modeEnabled;
+int alertStatus = 0;
+int counter = 0;
+char input;
+
 void setup() {
-  /*
-   * Beginning the Serial.
+
+  pinMode(RESET, OUTPUT);
+  digitalWrite(RESET, LOW);
+  /**
+   * GSM_TRIGGER comes out of the main Arduino Mega board
+   * The input determines if an SMS is necessary
    */
-  Serial.begin(9600);
-  /*
-   * Initializing the modules.
-   */
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
-  pinMode(RECEIVER, INPUT);
-  initGSMMessageSender();
-  initLDRSensor();
-  initUltrasonicSensor();
-  initPIRSensor();
-  initMotorDriver();
-  initServo();
+  pinMode(GSM_TRIGGER, INPUT);
+  pinMode(NOTIFIER, OUTPUT);
   
-  Serial.println("All set, let's roll!");
-  digitalWrite(ledPin, HIGH);
+  digitalWrite(13, LOW);
+  digitalWrite(NOTIFIER, LOW);
+  
+  Serial.begin(9600);
+ // initGSMModule();
+
+  Wire.begin();
+  
+  Serial.println("Project BlueBerry\n- A dog is a man's best friend");
+  Serial.println("Bark, Bark - Waking up...");  
+  
+  Serial.println("Enter the number of the mode you'd like to make it work in: ");
+  Serial.println("1. Vigilance mode\n2. Walk mode \n3. RC Car mode");
+  for(;;) {
+    
+    input = Serial.read();
+    if (input == '1' || input == '2' || input == '3') {
+
+      break;
+    }
+  }
+  delay(1000);
+  
+  Wire.beginTransmission(8); // transmit to device #8
+
+  switch (input) {
+    
+    case '1':
+      Serial.println("Vigilance mode:\n Activates all of its senses to detect if something's wrong when you are not around.");
+      Wire.write('v');
+      break;
+
+    case '2':
+      Serial.println("Walking mode:\n\n Take your dog for a walk!");
+      Wire.write('w');
+      break; 
+
+     case '3':
+      Serial.println("RC Mode: run your dog like a car!");
+      Wire.write('b');
+      break;
+  }
+
+  Wire.endTransmission();
+  Wire.requestFrom(8, 100);
+  
+  for (;;) {
+
+    if (Wire.available()) {
+        modeEnabled = Wire.read(); // receive a byte as character
+        break;
+    }
+  }
+
+  switch (modeEnabled) {
+
+    case 'v': 
+      Serial.println("Vigilance mode activated");
+      break;
+    case 'w':
+      Serial.println("Walking mode activated");
+      break;
+    case 'b':
+      Serial.println("RC locomotive mode activated");
+      break;
+  }
+  pinMode(13, OUTPUT);
+  digitalWrite(13, LOW);
+  
 }
 
 void loop() {
-  /* 
-   * Run the Arduino loop, we need a trigger from the bluetooth
-   * TODO: set up modes
-   */
-   vigilanteMode();
-   //walkMode();
-   delay(500);
-}
-/**
- * Vigilante mode
- * Intrusion detection and notification system
- */
-void vigilanteMode() {
-  /**
-   * The notification was sent
-   * Make some noise till they ask you to stop
-   */
-  //Serial.println(digitalRead(RECEIVER));
-  if (digitalRead(RECEIVER) == HIGH) {
-    Serial.println("Receiver is high");
-  //  stopAlert();
-    makeNoise();
+  digitalWrite(NOTIFIER, LOW);
+  digitalWrite(RESET, LOW);  
+  input = Serial.read();
+
+  
+  if (input == 'r') {
+
+    Wire.beginTransmission(8);
+    Wire.write('r');
+    Wire.endTransmission();
+    digitalWrite(RESET, HIGH);
     
+    setup();
+    return;
+  }
+
+  else if (modeEnabled == 'b') { 
+
+    Serial.print("bluetooth");
+    if (Serial.available()) {
+
+    input = Serial.read();
+
+    if (input == 'r') {
+      setup();
+      return;
+    }
+    Wire.beginTransmission(8);
+
+    Wire.write(input);
+    Wire.endTransmission();
+    }
+    return;
+  }
+  digitalWrite(NOTIFIER, LOW);
+
+  /**
+   * Set the phone number to send the sms to and a not-so panicking message.
+   */
+  char number[15] = "7005308234";
+  char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
+  /**
+   * Cancel the alarm?
+   */
+  if (receivePhoneCallFromSpecificNumber(number)) {
+    
+    digitalWrite(NOTIFIER, LOW);
+    //
+    alertStatus = 0;
     //return;
   }
-  /**
-   * Keep checking if some motion was detected
-   */
-  else {
-    Serial.println("Receiver is low");
-    motionDetected = false;
-    if (hasStateChanged()) {
-      Serial.println("Anomaly detected");
-      sendAlert();
-     //delay(60000);
-    }
-    noTone(8); 
+  if (alertStatus == 1) {
+    digitalWrite(NOTIFIER, HIGH);
   }
-}
-/**
- * Checks if any state has been changed.
- * This assumes that everything around will be at complete rest
- */
-boolean hasStateChanged() {
-  /** 
-   * Detecting any motion, light or distance change
-   */
-  detectMotionChange();
   /**
-   * Putting a counter to start counting from the second iteration
-   * Analog has fragile results
+   * The master control wants to alert the user
    */
-  int currentLightState = readLightState(); 
-  int lightChanged = detectLightChange(previousLightState, currentLightState);
-  
-  previousLightState = currentLightState;
-  
-  int distanceChanged = detectDistanceChange(lastDistance);
-  lastDistance = calculateDistance();
-  /**
-   * We need 2 out of 3 to be confirmed of some anomaly.
-   * The bitwise doesn't seem to be particularly performant
-   */
-  Serial.println("Motion");
-  Serial.println(motionDetected);
-  Serial.println("Light");
-  Serial.println(lightChanged);
-  Serial.println("Distance");
-  Serial.println(distanceChanged);
-  int totalSensorValue = motionDetected + lightChanged + distanceChanged;
-  /**
-   * Passed if >= 2, alert user.
-   */
-  return totalSensorValue >= 2;
-}
-/**
- * Alerts user- vigilante mode
- */
-void alert() {
-
-}
-/**
- * The friendly walk mode is basically an obstacle avoiding mode
- * Can be used for taking the dog out for a walk.
- * Guidance for the blind, if you may.
- */
-void walkMode() {
-  /**
-   * Keep moving forward as long as the path is clear
-   */
-  if (pathClear(30)) {
-    
-    moveForward(currentSpeed, 255);
-    currentSpeed = getMotorSpeed();
-  }
-  
-  else {
-
-    brake(1000);
-    Serial.println("Braking");
-    moveBackward(100);
-    delay(2000);
-    brake(1000);
+  if (digitalRead(GSM_TRIGGER) == HIGH && alertStatus != 1) {
     /**
-     * Analyse
+     * To avoid sending continual messages
+     * Repeat this every 5 times
      */
-    int clearDirection;
-    bool val;
-    if (lookRight()) {
-      //Serial.println(val);
-      returnToMean();
-      clearDirection = RIGHT;
+    Serial.println("Received alert request");
+    digitalWrite(13, HIGH);
+ 
+    if (sendSMSAlert(number, message) && fakePhoneCall(number)) {
+      /**
+       * Maybe notify the main board about the success?
+       */
+      
+      delay(2000);
+      digitalWrite(NOTIFIER, HIGH);
+      alertStatus = 1;
+    } else {
+      /**
+       * The alert failed, try again
+       */
+      Serial.println("Alert failed, trying again");
+      digitalWrite(NOTIFIER, LOW);
+      loop();
     }
-
-    else if (lookLeft()) {
-
-      returnToMean();
-      clearDirection = LEFT;
-    }
-
-    returnToMean();
-    steer(clearDirection);
-  }
-}
-/**
- * Steers the locomotive with the predetermined side
- * Use ultrasonic to see path clearance
- */
-void steer(int direction) {
-  /**
-   * The ultrasonic keeps looking from the mean position for clearance
-   */
-  if (!pathClear(30)){
-    
-    turn(direction);
-    steer(direction);
-  }
-  
-  else {
-
-    brake(1000);
+    delay(1000);
   }
 }

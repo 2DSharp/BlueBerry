@@ -11,7 +11,6 @@
  * Also that we had an extra Uno
  * This uno runs independently, checks if the other board wants to send an SMS
  */
-#define TRIGGER 22
 
 void initGSMMessageSender() {
 

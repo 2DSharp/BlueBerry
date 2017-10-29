@@ -13,7 +13,7 @@ Modified by Tolson Winters (Aug 27, 2014) for simplified serial monitor reading.
 #define trigPin 12
 #define echoPin 13
 
-void init() {
+void initUltrasonic() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 }
@@ -28,7 +28,7 @@ void looper() {
   digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 29.1;
-
+  Serial.println(distance);
   if (distance >= 1000 || distance <= 2){
     Serial.println("Out of range");
   }

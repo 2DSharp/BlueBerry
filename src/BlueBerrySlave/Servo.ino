@@ -21,6 +21,10 @@ void initServo() {
   HorizontalServo.write(90);
   Serial.println("Servo initialized");
 }
+void stopServo() {
+  HorizontalServo.detach();
+  
+}
 /**
  * Looks left to find if path is clear
  */

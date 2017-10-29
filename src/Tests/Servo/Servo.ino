@@ -16,13 +16,23 @@ int pos = 90;    // variable to store the servo position
 
 void setup() {
   Serial.begin (9600);
+  pinMode(28, OUTPUT);
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  Serial.println("Starting");
+  
+}
 
-  for (pos = 90; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+void loop() {
+
+ digitalWrite(28, HIGH);
+ delay(1000);
+ for (pos = 90; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
+  
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(12);                       // waits 15ms for the servo to reach the position
   }
+    Serial.write("working");
   myservo.write(90);
   
   delay(1000);
@@ -32,9 +42,9 @@ void setup() {
     delay(12);                       // waits 15ms for the servo to reach the position
   }
   myservo.write(90);
-}
 
-void loop() {
- 
+  
+ digitalWrite(28, LOW);
+ delay(1000);
 }
 

@@ -25,7 +25,7 @@ GSMVoiceCall vcs;
 /**
  * The calling number to the GSM module
  */
-char numtel[20];
+char numtel[15];
 
 void initGSMModule() {
   
@@ -124,6 +124,7 @@ bool sendSMSAlert(char number[15], char message[200]) {
       /** 
        *  Nothing's going on
        */
+       return false;
       break;
 
     case RECEIVINGCALL: 
@@ -138,13 +139,14 @@ bool sendSMSAlert(char number[15], char message[200]) {
       // Print the calling number
       Serial.print("Number:");
       Serial.println(numtel);
+      Serial.println("Success");
+      vcs.hangCall();
+      return true;
       /**
        * The calling number is same as the expected number
        */
       if (strcmp(number,numtel) == 0) {
-        
-        vcs.hangCall();
-        return true;
+
       }
       vcs.hangCall();
       break;
@@ -156,4 +158,5 @@ bool sendSMSAlert(char number[15], char message[200]) {
       break;
   }
   delay(1000);
+  return false;
  }
