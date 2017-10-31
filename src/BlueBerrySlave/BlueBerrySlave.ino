@@ -100,105 +100,26 @@ void loop() {
    * Run the Arduino loop, we need a trigger from the bluetooth
    * TODO: set up modes
    */
-   digitalWrite(TRIGGER, LOW);
-   if (digitalRead(RESET) == HIGH) {
-
-    setup();
-   }
-
-   switch (mode) {
+  switch (mode) {
     
-    case VIGILANCE_MODE:
-      vigilanteMode();
-      delay(1000);
-      break;
+      case VIGILANCE_MODE:
+	  vigilanteMode();
+	  delay(1000);
+	  break;
       
-    case WALK_MODE:
-      digitalWrite(LED_SEQUENCE, HIGH);
-      walkMode();
-      delay(500); 
-      break;
+      case WALK_MODE:
+	  digitalWrite(LED_SEQUENCE, HIGH);
+	  walkMode();
+	  delay(500); 
+	  break;
       
-     case RC_MODE:
-      rcMode();
-      delay(500);
-      break;
-   }
-}
-
-/**
- * Vigilante mode
- * Intrusion detection and notification system
- */
-void vigilanteMode() {
-  /**
-   * The notification was sent
-   * Make some noise till they ask you to stop
-   */
-  //Serial.println(digitalRead(RECEIVER));
-
-  Wire.requestFrom(8, 6);    // request 6 bytes from slave device #8
-
-  if (Wire.available()) {
-    
-    char messageStatus = Wire.read(); // receive a byte as character
-    if (messageStatus == ALERT_RECEIVED)  {
-          
-      makeNoise();
-    }
-  }
-  /**
-   * Keep checking if some motion was detected
-   */
-  else {
-    
-    motionDetected = false;
-    
-    if (hasStateChanged()) {
-
-      Serial1.println("Anomaly detected");
-      sendAlert();
-     //delay(60000);
-    }
-    noTone(8); 
+      case RC_MODE:
+	  rcMode();
+	  delay(500);
+	  break;
   }
 }
-/**
- * Checks if any state has been changed.
- * This assumes that everything around will be at complete rest
- */
-boolean hasStateChanged() {
-  /** 
-   * Detecting any motion, light or distance change
-   */
-  detectMotionChange();
-  /**
-   * Putting a counter to start counting from the second iteration
-   * Analog has fragile results
-   */
-  int currentLightState = readLightState(); 
-  int lightChanged = detectLightChange(previousLightState, currentLightState);
-  
-  previousLightState = currentLightState;
-  
-  int distanceChanged = detectDistanceChange(lastDistance);
-  lastDistance = calculateDistance();
-  /**
-   * We need 2 out of 3 to be confirmed of some anomaly.
-   * The bitwise doesn't seem to be particularly performant
-   */
-  Serial1.println("Motion");
-  Serial1.println(motionDetected);
-  Serial1.println("Light");
-  Serial1.println(lightChanged);
-  Serial1.println("Distance");
-  Serial1.println(distanceChanged);
-  int totalSensorValue = motionDetected + lightChanged + distanceChanged;
-  /**
-   * Passed if >= 2, alert user.
-   */
-  return totalSensorValue >= 2;
-}
+
 /**
  * Alerts user- vigilante mode
  */
@@ -254,10 +175,6 @@ void walkMode() {
 
     brake(1000);
     digitalWrite(LED_SEQUENCE, LOW);
-    Serial1.println("Braking");
-   // moveBackward(100);
-   // delay(2000);
-   // brake(1000);
     /**
      * Analyse
      */
