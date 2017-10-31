@@ -15,8 +15,23 @@
 void initGSMMessageSender() {
 
   Serial.println("Starting GSM interface");
-  pinMode(TRIGGER, OUTPUT);
-  digitalWrite(TRIGGER, LOW);
+  Wire.beginTransmission(8);
+  Wire.write('g');
+  Wire.endTransmission();    
+  
+  Wire.requestFrom(8, 6);    
+  /**
+   * Check if the GSM module was initialized
+   */
+  if (Wire.available()) {
+
+    char messageStatus = Wire.read();
+
+    while (messageStatus != '1') {
+      messageStatus = Wire.read();
+    }
+  
+  }
   Serial.println("Initialized GSM interface");
 }
 /**
@@ -24,16 +39,12 @@ void initGSMMessageSender() {
  */
 void sendAlert() {
   
-  Serial.println("Sending alert");
+  Serial1.println("Sending alert");
   Wire.beginTransmission(8); // transmit to device #8
   Wire.write('m');              // sends one byte
   Wire.endTransmission();    // stop transmitting
   
-  }
-/**
- * To avoid continual alerts to the user
- */
-void stopAlert() {
-  
-  //digitalWrite(TRIGGER, LOW);
 }
+
+
+

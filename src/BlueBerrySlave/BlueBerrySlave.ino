@@ -1,221 +1,114 @@
 /**
- * Project BlueBerry Main controller
+ * Interface for the GSM module and the main arduino
  * @author Dedipyaman Das
  * github.com/2DSharp/BlueBerry
  * @version 1.0/17 
  */
 /**
- * Project BlueBerry's main sketch that integrates the other sketches
- * Upon compilation, it automagically includes all the dependencies.
- * This program runs the Arduino Mega and is responsible for running
- * the entire robot.
+ * This is not necessary
+ * But since the main arduino connections went messy
+ * And for some reason the GSM wasn't working with that one
+ * Also that we had an extra Uno
+ * This uno runs independently, checks if the other board wants to send an SMS
  */
-
 #include <Wire.h>
- 
-#define LEFT 1
-#define RIGHT 2
-#define TRIGGER 22
-#define RECEIVER 23
-#define RESET 26
-#define LED_SEQUENCE 28
+/**
+#define GSM_TRIGGER 6
+#define NOTIFIER 7
+//#define VIGILANCE 8
+//#define WALK 9
+#define RESET 10
+*/
+int alertStatus = 0;
 
-const char VIGILANCE_MODE = '1';
-const char WALK_MODE = '2';
-const char RC_MODE = '3';
-const char RESET_MODE = 'r';
 const char ALERT_RECEIVED = 's';
 const char ABORT_ALERT = 'a';
+char messageStatus = '0';
 
-char input;
-int ledPin = 13;
-bool motionDetected;
-bool lightChanged;
-int previousLightState;
-int ldrCounter = 0;
-int runningMode;
-char mode;
-/**
- * Setting as global for the Ultrasonic to access
- */
-int lastDistance;
-int currentSpeed = 0;
-int direction;
-int response = 0;
+char number[15] = "7005308234";
+char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
+
 void setup() {
-  /*
-   * Beginning the Serial.
-   */
-  Serial1.begin(9600);
-  Wire.begin(); 
-  /*
-   * Initializing the modules.
-   */
-  
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
-  //pinMode(RECEIVER, INPUT);
-  pinMode(LED_SEQUENCE, OUTPUT);
-  
-  blinkLED(LED_SEQUENCE, 500, 4);
-  showDefaultSelectionUI();
-  mode = getModePreference();
-  showSelectedModeDescription(mode);
-  initialize(mode);
   /**
-  Wire.begin(8);                // join i2c bus with address #8
-  Wire.onReceive(receiveEvent); // register event
-  delay(5000);
-  Wire.onRequest(requestEvent);
-  */
-  Serial1.println("All set, let's roll!");
-  blinkLED(LED_SEQUENCE, 1000, 2);
-}
-
-void initialize(char mode) {
-
-  initUltrasonicSensor();
-  initGSMMessageSender();
-  
-  switch(mode) {
-    
-    case VIGILANCE_MODE:
-      initLDRSensor();
-      initPIRSensor();
-      break;
-    case RC_MODE:
-      initMotorDriver();
-      break;
-    case WALK_MODE:
-      initMotorDriver();
-      initServo();
-      break;
-    case RESET_MODE:
-      setup();
-      break;
-  }
-}
-void loop() {
-  /* 
-   * Run the Arduino loop, we need a trigger from the bluetooth
-   * TODO: set up modes
+   * Begin the wired connection from the master to the slave
+   * Address 8 is what the both communicate with
    */
-  switch (mode) {
-    
-      case VIGILANCE_MODE:
-	  vigilanteMode();
-	  delay(1000);
-	  break;
-      
-      case WALK_MODE:
-	  digitalWrite(LED_SEQUENCE, HIGH);
-	  walkMode();
-	  delay(500); 
-	  break;
-      
-      case RC_MODE:
-	  rcMode();
-	  delay(500);
-	  break;
-  }
-}
-
-/**
- * Alerts user- vigilante mode
- */
-void rcMode() {
-
-  Wire.begin(8);                // join i2c bus with address #8
-  Wire.onReceive(receiveRCCommand); // register event
-  moveForward(currentSpeed, 255);
-  currentSpeed = getMotorSpeed();
-}
-
-void receiveRCCommand(int howMany) {
+  Wire.begin(8);
+  /**
+   * Execute the request to send alert message
+   */
+  Wire.onReceive(receiveMessageRequest);
+  /**
+   * The status of the alert, to control the alarm and alert frequency
+   */
+  Wire.onRequest(sendAlertStatus); // register event
   
-  char rcDirection = Wire.read();
-
-  switch(rcDirection) {
-
-    case '6':
-      turn(1);
-      Serial1.println("Turning left");
-      digitalWrite(13, HIGH);
-      delay(1500);
-      break;
-    case '7':
-      turn(2);
-      digitalWrite(13, LOW);
-      Serial1.println("Turning right");
-      delay(1500);
-      break;
-     case '8':
-      brake(1500);
-      Serial1.println("Braking");
-      break; 
-  }
+  Serial.begin(9600);
 }
 /**
- * The friendly walk mode is basically an obstacle avoiding mode
- * Can be used for taking the dog out for a walk.
- * Guidance for the blind, if you may.
+ * Sends an SMS and calls the user alerting them of any anomaly in their house
  */
-void walkMode() {
-  /**
-   * Keep moving forward as long as the path is clear
-   */
-  digitalWrite(LED_SEQUENCE, HIGH);
-  if (pathClear(30)) {
-    
-    moveForward(currentSpeed, 255);
-    currentSpeed = getMotorSpeed();
-  }
-  
-  else {
+bool sendAlert(char number[15], char message[200] ) {
 
-    brake(1000);
-    digitalWrite(LED_SEQUENCE, LOW);
+  Serial.println("Received alert request");
+
+  while (!sendSMSAlert(number, message) && !fakePhoneCall(number)) {
     /**
-     * Analyse
+     * Keep trying
      */
-    int clearDirection;
-    bool val;
-    
-    digitalWrite(LED_SEQUENCE, HIGH);
-    if (lookRight()) {  
-      //Serial1.println(val);
-      returnToMean();
-      clearDirection = RIGHT;
-    }
-
-    else if (lookLeft()) {
-
-      returnToMean();
-      clearDirection = LEFT;
-    }
-    
-    digitalWrite(LED_SEQUENCE, LOW);
-    digitalWrite(LED_SEQUENCE, HIGH);
-    returnToMean();
-    steer(clearDirection);
+    messageStatus = '0';
   }
+  /**
+   * Sets the message status to ALERT_RECEIVED for the alarm to go off
+   * alertStatus = 1 makes sure no subsequent alerts are sent before the previous alarm
+   * is responed to.
+   */
+  alertStatus = 1;
+  messageStatus = ALERT_RECEIVED;
+  delay(1000);
+
+  return true;
 }
 /**
- * Steers the locomotive with the predetermined side
- * Use ultrasonic to see path clearance
+ * Wire connection to  write to the mega board
  */
-void steer(int direction) {
-  /**
-   * The ultrasonic keeps looking from the mean position for clearance
-   */
-  if (!pathClear(30)){
-    
-    turn(direction);
-    steer(direction);
-  }
+void sendAlertStatus() {
   
-  else {
+  Wire.write(messageStatus);
+}
+/**
+ * Wire connection for reading the request from the mega board
+ * Sends alerts accordingly
+ */
+void receiveMessageRequest(int howMany) {
+  
+  char request = Wire.read();
 
-    brake(1000);
+  if (request == 'g') {
+
+    initGSMModule();
+  }
+  /**
+   * To avoid sending continual messages
+   */
+  if (request == 'm' && alertStatus != 1) {
+    
+    alertStatus = sendAlert(number, message);
+   }
+}
+
+void loop() {
+  /** 
+   * Cancel the alarm?
+   */
+  if (messageStatus == ABORT_ALERT) {
+
+    messageStatus = '1';
+  }
+  if (receivePhoneCallFromSpecificNumber(number)) {
+
+    messageStatus = ABORT_ALERT;
+    alertStatus = 0;
+    delay(1000);
   }
 }

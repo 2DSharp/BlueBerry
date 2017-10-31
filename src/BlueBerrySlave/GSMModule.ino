@@ -56,6 +56,7 @@ void initGSMModule() {
    * Done
    */
   Serial.println("GSM initialized");
+  messageStatus = '1';
 }
 /**
  * Sending SMS

@@ -1,97 +1,141 @@
 /**
- * Interface for the GSM module and the main arduino
+ * Project BlueBerry Main controller
  * @author Dedipyaman Das
  * github.com/2DSharp/BlueBerry
  * @version 1.0/17 
  */
 /**
- * This is not necessary
- * But since the main arduino connections went messy
- * And for some reason the GSM wasn't working with that one
- * Also that we had an extra Uno
- * This uno runs independently, checks if the other board wants to send an SMS
+ * Project BlueBerry's main sketch that integrates the other sketches
+ * Upon compilation, it automagically includes all the dependencies.
+ * This program runs the Arduino Mega and is responsible for running
+ * the entire robot.
  */
-#include <Wire.h>
 
-#define GSM_TRIGGER 6
-#define NOTIFIER 7
-//#define VIGILANCE 8
-//#define WALK 9
-#define RESET 10
-char modeEnabled;
-int alertStatus = 0;
-int counter = 0;
-char input;
+#include <Wire.h>
+#include <EEPROM.h>
+#define LEFT 1
+#define RIGHT 2
+//#define TRIGGER 22
+//#define RECEIVER 23
+//#define RESET 26
+#define LED_SEQUENCE 28
+
+const char VIGILANCE_MODE = '1';
+const char WALK_MODE = '2';
+const char RC_MODE = '3';
+const char RESET_MODE = 'r';
 const char ALERT_RECEIVED = 's';
 const char ABORT_ALERT = 'a';
-char messageStatus = '0';
+int ledPin = 13;
+char input;
+bool motionDetected;
+bool lightChanged;
+int previousLightState;
+int ldrCounter = 0;
+char mode;
+/**
+ * Setting as global for the Ultrasonic to access
+ */
+int lastDistance;
+int currentSpeed = 0;
+int direction;
 
-char number[15] = "7005308234";
-char message[200] =  "There seems to be some disturbance in your house, maybe you should check it out.";
+int response = 0;
 
 void setup() {
-
-  /**
-   * GSM_TRIGGER comes out of the main Arduino Mega board
-   * The input determines if an SMS is necessary
+  /*
+   * Beginning the Serial.
    */
-  Wire.begin(8);                // join i2c bus with address #8
-  Wire.onReceive(receiveMessageRequest); // register event
-  Wire.onRequest(sendAlertStatus); // register event
+  Serial1.begin(9600);
+  Wire.begin(); 
+  /*
+   * Initializing the modules.
+   */  
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+  pinMode(LED_SEQUENCE, OUTPUT);
 
-  Serial.begin(9600);
-  initGSMModule();
-}
-
-bool sendAlert(char number[15], char message[200] ) {
-
-  Serial.println("Received alert request");
-
-  while (!sendSMSAlert(number, message) && !fakePhoneCall(number)) {
-  /**
-   * Maybe notify the main board about the success?
-   *  
-   * delay(2000);
-   * digitalWrite(NOTIFIER, HIGH);
-   */
-   messageStatus = '0';
+  blinkLED(LED_SEQUENCE, 500, 4);
+  Serial1.println("Project Blueberry!");
+  unsigned char value;
+  for (int address = 0; address < 4; address++) {
+    value = EEPROM.read(address);
+    Serial.print(" ");
+    Serial1.print(value);
   }
+  /**getPassword();
+  if (!checkPassword()) {
+    setup();
+    return;
+  }
+  **/
+  showDefaultSelectionUI();
+  getModePreference();
+  mode = input;
+  showSelectedModeDescription(mode);
+  Serial1.println("-----");
 
-  messageStatus = ALERT_RECEIVED;
-  delay(1000);
+  Serial1.println("Starting...");
+  initialize(mode);
 
-  return true;
+  Serial1.println("All set, let's roll!");
+  blinkLED(LED_SEQUENCE, 1000, 2);
 }
 
-void sendAlertStatus() {
-  
-  Wire.write(messageStatus);
+void initialize(char initMode) {
+
+  initUltrasonicSensor();
+  initGSMMessageSender();
+
+  switch(initMode) {
+    
+    case VIGILANCE_MODE:
+      Serial.println("Initializing Vigilance mode...");
+      initLDRSensor();
+      initPIRSensor();
+      delay(120000);
+      break;
+    case RC_MODE:    
+      Serial.println("Initializing RC mode...");
+      initMotorDriver();
+      break;
+    case WALK_MODE:
+      Serial.println("Initializing Walk mode...");
+      initMotorDriver();
+      initServo();
+      break;
+    case RESET_MODE:
+      setup();
+      break;
+      return;
+  }
 }
-
-void receiveMessageRequest(int howMany) {
-
-  char request = Wire.read();    // receive byte as an integer
-
-  if (request == 'm' && alertStatus != 1) {
-    /**
-     * To avoid sending continual messages
-     * Repeat this every 5 times
-     */
-    alertStatus = sendAlert(number, message);
-   }
-}
-
 void loop() {
-  /**
-   * Set the phone number to send the sms to and a not-so panicking message.
+  /* 
+   * Run the Arduino loop, we need a trigger from the bluetooth
    */
-  /** 
-   * Cancel the alarm?
-   */
-  if (receivePhoneCallFromSpecificNumber(number)) {
 
-    messageStatus = ABORT_ALERT;
-    alertStatus = 0;
-    //return;
+  if (Serial1.read() == RESET_MODE) {
+
+    initialize(RESET_MODE);
+  }
+  switch (mode) {
+    
+      case VIGILANCE_MODE:
+    	  vigilanceMode();
+    	  delay(1000);
+    	  break;
+      
+      case WALK_MODE:
+    	  digitalWrite(LED_SEQUENCE, HIGH);
+    	  walkMode();
+    	  delay(500); 
+    	  break;
+      
+      case RC_MODE:
+    	  rcMode();
+    	  delay(500);
+    	  break;
   }
 }
+

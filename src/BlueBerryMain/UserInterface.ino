@@ -4,7 +4,7 @@ void showDefaultSelectionUI() {
   Serial1.println("Bark, Bark - Waking up...");  
   
   Serial1.println("Enter the number of the mode you'd like to make it work in: ");
-  Serial1.println("1. Vigilance mode\n2. Walk mode \n3. RC Car mode");
+  Serial1.println("1. Vigilance mode\n2. Walk mode \n3. RC Car mode \n4. Change the PIN");
 
 }
 
@@ -15,8 +15,8 @@ char getModePreference() {
     if (Serial1.available()) {
       input = Serial1.read();
       
-      if (input == '1' || input == '2' || input == '3' || input == 'r') {
-  
+      if (input == '1' || input == '2' || input == '3' || input == '4' || input == 'r') {
+
         break;
         return input;
       }
@@ -43,6 +43,14 @@ void showSelectedModeDescription(char input) {
      case RESET_MODE:
       setup();
       break;
+
+     case '4':
+      Serial1.println("Enter a new 4 digit PIN");
+      getPassword();
+      setPassword();
+      Serial1.println("PIN set successfully");
+      setup();
+      break;      
   }
 }
 

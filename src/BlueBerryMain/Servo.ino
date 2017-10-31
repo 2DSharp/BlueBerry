@@ -57,7 +57,7 @@ boolean lookRight() {
       Serial.println("Right is clear");
       clearPath = true;
     }
-    delay(15);
+    delay(17);
   }
 
   return clearPath;
@@ -65,8 +65,23 @@ boolean lookRight() {
 /**
  * Mean positioning to keep the head straight
  */
-void returnToMean() {
+void returnToMean(int currentFacing) {
 
-  HorizontalServo.write(90);
+  switch (currentFacing) {
+
+    case LEFT:
+      for (int i = 0; i <= 90; i++) {
+        HorizontalServo.write(i);
+        delay(8);    
+      }
+      break;
+      
+    case RIGHT:
+      for (int i = 0; i <= 90; i++) {
+        HorizontalServo.write(i);
+        delay(8);    
+      }
+      break;    
+  }
   delay(1000);
 }

@@ -20,7 +20,6 @@ long unsigned int lowIn;
 
 #define PIR_PIN 48
 
-
 boolean lockLow = true;
 boolean takeLowTime;
 

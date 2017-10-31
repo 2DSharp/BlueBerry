@@ -1,8 +1,11 @@
 /**
- * Vigilante mode
+ * Vigilance mode
  * Intrusion detection and notification system
+ * @author Dedipyaman Das
+ * github.com/2DSharp/BlueBerry
+ * @version 1.0/17
  */
-void vigilanteMode() {
+void vigilanceMode() {
   /**
    * The notification was sent
    * Make some noise till they ask you to stop
@@ -15,10 +18,11 @@ void vigilanteMode() {
   if (Wire.available()) {
     
     char messageStatus = Wire.read();
+    
     if (messageStatus == ALERT_RECEIVED)  {
-          
+      
       makeNoise();
-      vigilanteMode();
+      vigilanceMode();
       return;
     }
 
@@ -38,15 +42,15 @@ void vigilanteMode() {
       
       if (hasStateChanged()) {
 
-	Serial.println("Anomaly detected");
-	/**
-	 * Send an alert as long as the status of the message doesn't change
-	 */
-	while (messageStatus != ALERT_RECEIVED) {
-	  
-	  sendAlert();
-	  messageStatus = Wire.read();
-	}
+      	Serial.println("Anomaly detected");
+      	/**
+      	 * Send an alert as long as the status of the message doesn't change
+      	 */
+      	while (messageStatus != ALERT_RECEIVED) {
+      	  
+      	  sendAlert();
+      	  messageStatus = Wire.read();
+      	}
       }
     }
   }

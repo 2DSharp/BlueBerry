@@ -3,7 +3,6 @@
  * @author Dedipyaman Das
  * github.com/2DSharp/BlueBerry
  * @version 1.0/17
- * 
  */
 /**
  * Motor one - LEFT
@@ -93,10 +92,10 @@ int getMotorSpeed() {
  */
 void turn(int direction) {
 
-  if (direction == 1) {
+  if (direction == LEFT) {
     turnForwardLeft();
   }
-  else if (direction == 2) {
+  else if (direction == RIGHT) {
     turnForwardRight();
   }
 }
