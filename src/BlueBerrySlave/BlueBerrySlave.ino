@@ -19,10 +19,15 @@
 #define RECEIVER 23
 #define RESET 26
 #define LED_SEQUENCE 28
-const char WALK_MODE = 'w';
-const char VIGILANCE_MODE = 'v';
+
+const char VIGILANCE_MODE = '1';
+const char WALK_MODE = '2';
+const char RC_MODE = '3';
 const char RESET_MODE = 'r';
-const char RC_MODE = 'b';
+const char ALERT_RECEIVED = 's';
+const char ABORT_ALERT = 'a';
+
+char input;
 int ledPin = 13;
 bool motionDetected;
 bool lightChanged;
@@ -41,44 +46,37 @@ void setup() {
   /*
    * Beginning the Serial.
    */
-  Serial.begin(9600);
+  Serial1.begin(9600);
+  Wire.begin(); 
   /*
    * Initializing the modules.
    */
-  pinMode(RESET, INPUT);
+  
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
-  pinMode(RECEIVER, INPUT);
+  //pinMode(RECEIVER, INPUT);
   pinMode(LED_SEQUENCE, OUTPUT);
-  digitalWrite(LED_SEQUENCE, HIGH);
+  
+  blinkLED(LED_SEQUENCE, 500, 4);
+  showDefaultSelectionUI();
+  mode = getModePreference();
+  showSelectedModeDescription(mode);
+  initialize(mode);
+  /**
   Wire.begin(8);                // join i2c bus with address #8
   Wire.onReceive(receiveEvent); // register event
   delay(5000);
   Wire.onRequest(requestEvent);
-  if (response == 0) {
-    setup();
-  }
-  
-  Serial.println("All set, let's roll!");
-  digitalWrite(ledPin, HIGH);
+  */
+  Serial1.println("All set, let's roll!");
+  blinkLED(LED_SEQUENCE, 1000, 2);
 }
-// function that executes whenever data is received from master
-// this function is registered as an event, see setup()
-void receiveEvent(int howMany) {
 
-  mode = Wire.read();    // receive byte as an integer
-  response = 1; // Can continue now
+void initialize(char mode) {
+
   initUltrasonicSensor();
   initGSMMessageSender();
-  init(mode);
   
-}
-void requestEvent() 
-{
-  Wire.write(mode);
-}
-void init(char mode) {
-
   switch(mode) {
     
     case VIGILANCE_MODE:
@@ -126,7 +124,6 @@ void loop() {
       delay(500);
       break;
    }
-
 }
 
 /**
@@ -139,21 +136,27 @@ void vigilanteMode() {
    * Make some noise till they ask you to stop
    */
   //Serial.println(digitalRead(RECEIVER));
-  if (digitalRead(RECEIVER) == HIGH) {
-    Serial.println("Receiver is high");
-  //  stopAlert();
-    makeNoise();
+
+  Wire.requestFrom(8, 6);    // request 6 bytes from slave device #8
+
+  if (Wire.available()) {
     
-    //return;
+    char messageStatus = Wire.read(); // receive a byte as character
+    if (messageStatus == ALERT_RECEIVED)  {
+          
+      makeNoise();
+    }
   }
   /**
    * Keep checking if some motion was detected
    */
   else {
-    Serial.println("Receiver is low");
+    
     motionDetected = false;
+    
     if (hasStateChanged()) {
-      Serial.println("Anomaly detected");
+
+      Serial1.println("Anomaly detected");
       sendAlert();
      //delay(60000);
     }
@@ -184,12 +187,12 @@ boolean hasStateChanged() {
    * We need 2 out of 3 to be confirmed of some anomaly.
    * The bitwise doesn't seem to be particularly performant
    */
-  Serial.println("Motion");
-  Serial.println(motionDetected);
-  Serial.println("Light");
-  Serial.println(lightChanged);
-  Serial.println("Distance");
-  Serial.println(distanceChanged);
+  Serial1.println("Motion");
+  Serial1.println(motionDetected);
+  Serial1.println("Light");
+  Serial1.println(lightChanged);
+  Serial1.println("Distance");
+  Serial1.println(distanceChanged);
   int totalSensorValue = motionDetected + lightChanged + distanceChanged;
   /**
    * Passed if >= 2, alert user.
@@ -215,19 +218,19 @@ void receiveRCCommand(int howMany) {
 
     case '6':
       turn(1);
-      Serial.println("Turning left");
+      Serial1.println("Turning left");
       digitalWrite(13, HIGH);
       delay(1500);
       break;
     case '7':
       turn(2);
       digitalWrite(13, LOW);
-      Serial.println("Turning right");
+      Serial1.println("Turning right");
       delay(1500);
       break;
      case '8':
       brake(1500);
-      Serial.println("Braking");
+      Serial1.println("Braking");
       break; 
   }
 }
@@ -251,7 +254,7 @@ void walkMode() {
 
     brake(1000);
     digitalWrite(LED_SEQUENCE, LOW);
-    Serial.println("Braking");
+    Serial1.println("Braking");
    // moveBackward(100);
    // delay(2000);
    // brake(1000);
@@ -263,7 +266,7 @@ void walkMode() {
     
     digitalWrite(LED_SEQUENCE, HIGH);
     if (lookRight()) {  
-      //Serial.println(val);
+      //Serial1.println(val);
       returnToMean();
       clearDirection = RIGHT;
     }

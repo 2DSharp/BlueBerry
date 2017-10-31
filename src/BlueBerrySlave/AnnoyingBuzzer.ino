@@ -126,13 +126,6 @@ int noteDurations[] = {
 };
 
 void makeNoise() {
-  
-  for (;;) {
-
-    if (digitalRead(RECEIVER) == LOW) {
-      break;
-      return;
-    }
       // iterate over the notes of the melody:
     for (int thisNote = 0; thisNote < 8; thisNote++) {
   
@@ -148,5 +141,4 @@ void makeNoise() {
       // stop the tone playing:
       noTone(11);
     }    
-  }
 }

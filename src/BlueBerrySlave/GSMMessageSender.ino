@@ -23,10 +23,13 @@ void initGSMMessageSender() {
  * Talk to the other Arduino
  */
 void sendAlert() {
+  
   Serial.println("Sending alert");
-  digitalWrite(TRIGGER, HIGH);
-  //delay(10000);
-}
+  Wire.beginTransmission(8); // transmit to device #8
+  Wire.write('m');              // sends one byte
+  Wire.endTransmission();    // stop transmitting
+  
+  }
 /**
  * To avoid continual alerts to the user
  */
