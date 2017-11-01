@@ -12,17 +12,30 @@ void getPassword() {
       j++;
     }
 
-    if (j >= 3) {
+    if (j >= 4) {
 
       break;
     }
   }
 }
 
-void setPassword() {
+void showPassword() {
+  unsigned char value;
   
+  for (int address = 0; address < 4; address++) {
+    value = EEPROM.read(address);
+
+    Serial1.println(value);
+  }
+}
+
+void setPassword() {
+
+  Serial1.println("New PIN set: ");
   for(int i=0; i<4; i++) {  
-    EEPROM.update(i, buff[i]);
+    
+    EEPROM.update(i, buff[i]-'0');
+    Serial1.print(buff[i]-'0');
   }
 }
 
@@ -33,7 +46,7 @@ bool checkPassword() {
   for (int address = 0; address < 4; address++) {
     value = EEPROM.read(address);
 
-    if (buff[address] != value) {
+    if (buff[address]-'0' != value) {
 
       return false;
     }

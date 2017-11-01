@@ -47,10 +47,13 @@ void setup() {
    * Beginning the Serial.
    */
   Serial1.begin(9600);
+  Serial.begin(9600);
   Wire.begin(); 
   /*
    * Initializing the modules.
    */  
+   unsigned char buff[4];
+
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
   pinMode(LED_SEQUENCE, OUTPUT);
@@ -58,24 +61,26 @@ void setup() {
   blinkLED(LED_SEQUENCE, 500, 4);
   Serial1.println("Project Blueberry!");
   unsigned char value;
-  for (int address = 0; address < 4; address++) {
-    value = EEPROM.read(address);
-    Serial.print(" ");
-    Serial1.print(value);
-  }
-  /**getPassword();
+ /* Serial.println("EEPROM value: ");
+ for (int i =0; i <4; i++) {
+
+   value = EEPROM.read(i);
+   Serial1.println(value);
+}
+*/
+  getPassword();
+  showPassword();
   if (!checkPassword()) {
     setup();
     return;
   }
-  **/
+
   showDefaultSelectionUI();
   getModePreference();
   mode = input;
   showSelectedModeDescription(mode);
   Serial1.println("-----");
 
-  Serial1.println("Starting...");
   initialize(mode);
 
   Serial1.println("All set, let's roll!");
@@ -83,6 +88,8 @@ void setup() {
 }
 
 void initialize(char initMode) {
+     
+  Serial1.println("Initializing modules...");
 
   initUltrasonicSensor();
   initGSMMessageSender();
@@ -90,17 +97,17 @@ void initialize(char initMode) {
   switch(initMode) {
     
     case VIGILANCE_MODE:
-      Serial.println("Initializing Vigilance mode...");
+      Serial1.println("Initializing Vigilance mode...");
       initLDRSensor();
       initPIRSensor();
       delay(120000);
       break;
     case RC_MODE:    
-      Serial.println("Initializing RC mode...");
+      Serial1.println("Initializing RC mode...");
       initMotorDriver();
       break;
     case WALK_MODE:
-      Serial.println("Initializing Walk mode...");
+      Serial1.println("Initializing Walk mode...");
       initMotorDriver();
       initServo();
       break;
